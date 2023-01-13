@@ -12,12 +12,12 @@
       width="180" 
       align="center" 
       :filters="pnFilters"
-      :filter-method="filterPn"/>
+      :filter-method="filterHandler"/>
     <el-table-column prop="batchId" label="批次号" align="center"/>
-    <el-table-column prop="uid" label="UID" align="center"/>
+    <el-table-column prop="uid" label="工单" align="center" :filters="woFilters" :filter-method="filterHandler"/>
     <el-table-column prop="receivingnumber" label="数量" align="center"/>
     <el-table-column prop="receivingTime" label="收货时间" align="center" sortable/>
-    <el-table-column prop="state" label="状态" align="center"/>
+    <el-table-column prop="state" label="状态" align="center" :filters="stateFilters" :filter-method="filterHandler"/>
   </el-table>
 </template>
 
@@ -43,7 +43,7 @@ const tableRowClassName = ({
   row: User
   rowIndex: number
 }) => {
-  if (rowIndex === 1) {
+  if (rowIndex === 0 || rowIndex === 4 || rowIndex === 7 || rowIndex === 16) {
     return 'warning-row'
   }
   return 'success-row'
@@ -214,31 +214,85 @@ const data = reactive({
       receivingTime: '2016-05-01',
       state: '0'
     },
+    {
+      item: 17,
+      partnumber: '620-PURP004-00R1',
+      batchId: '000169',
+      uid: '000001605630',
+      receivingnumber: 400,
+      receivingTime: '2016-05-01',
+      state: '0'
+    },
+    {
+      item: 17,
+      partnumber: '620-PURP004-00R1',
+      batchId: '000169',
+      uid: '000001605630',
+      receivingnumber: 400,
+      receivingTime: '2016-05-01',
+      state: '0'
+    },
+    {
+      item: 17,
+      partnumber: '620-PURP004-00R1',
+      batchId: '000169',
+      uid: '000001605630',
+      receivingnumber: 400,
+      receivingTime: '2016-05-01',
+      state: '0'
+    },
   ]
 })
+
+// filters 去重
+const distinct = (array: string[]) => {
+  let distinctArr: string[] = []
+  let newArr: object[] = []
+  // 去重
+  distinctArr = Array.from(new Set(array))
+  // 装入 filters 数组
+  distinctArr.forEach(item => {
+    newArr.push({
+      text: item,
+      value: item
+    })
+  })
+  return newArr
+}
 
 // partNumber 去重
 const pnFilters = computed(() => {
   let pnArr: string[] = []
-  let pnDistinctArr: string[] = []
-  let pnNewArr: object[] = []
   // 所有 partNumber 抽出来装入集合
   data.tableData.forEach(item => {
     pnArr.push(item.partnumber)
   })
   // 去重
-  pnDistinctArr = Array.from(new Set(pnArr))
-  // 装入 filters 数组
-  pnDistinctArr.forEach(item => {
-    pnNewArr.push({
-      text: item,
-      value: item
-    })
-  })
-  return pnNewArr
+  return distinct(pnArr)
 })
 
-const filterPn = (
+// 工单去重
+const woFilters = computed(() => {
+  let woArr: string[] = []
+  // 所有工单抽出来装入集合
+  data.tableData.forEach(item => {
+    woArr.push(item.uid)
+  })
+  // 去重
+  return distinct(woArr)
+})
+
+// 状态去重
+const stateFilters = computed(() => {
+  let stateArr: string[] = []
+  // 所有工单抽出来装入集合
+  data.tableData.forEach(item => {
+    stateArr.push(item.state)
+  })
+  // 去重
+  return distinct(stateArr)
+})
+const filterHandler = (
   value: any,
   row: User,
   column: TableColumnCtx<User>
