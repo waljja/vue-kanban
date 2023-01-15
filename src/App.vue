@@ -75,32 +75,32 @@ onMounted(() => {
             </div>
           </div>
           <div class="header-right">
-              <div class="header-rg">
-                <div class="header-rg-f">
-                  <span class="right-font">MES</span>
-                </div>
-                <span class="header-time">当前时间：{{ dateTime }}</span>
+            <div class="header-rg">
+              <div class="header-rg-f">
+                <span class="right-font">MES</span>
               </div>
-              <div class="date-pick">
-                <el-date-picker
-                  class="date-picker"
-                  v-model="value1"
-                  type="daterange"
-                  unlink-panels
-                  range-separator="--->"
-                  start-placeholder="开始日期"
-                  end-placeholder="结束日期"
-                  size="default"
-                  :shortcuts="shortcuts"
-                />
-                <el-button class="export" type="primary">导出</el-button>
-              </div>
+              <span class="header-time">当前时间：{{ dateTime }}</span>
+            </div>
+            <div class="date-pick">
+              <el-date-picker
+                class="date-picker"
+                v-model="value1"
+                type="daterange"
+                unlink-panels
+                range-separator="--->"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"
+                size="default"
+                :shortcuts="shortcuts"
+              />
+              <el-button class="export" type="primary">导出</el-button>
+            </div>
           </div>
         </div>
       </el-header>
       <el-main class="main">
         <DataTable />
-        <el-pagination class="page" layout="prev, pager, next" :total="1000" :pager-count="15"/>
+        <el-pagination layout="prev, pager, next" :total="200" :pager-count="6"/>
       </el-main>
       <el-footer class="footer">HonorTone Product-KanBan By IT GuoZhao Ding 2023</el-footer>
     </el-container>
@@ -115,11 +115,12 @@ onMounted(() => {
   height: 100%;
   position: fixed;
   background-image: url("./assets/background.png");
+  text-align: center;
 }
 
 .header {
   margin-top: 20px;
-  height: 120px;
+  height: 15%;
   text-align: center;
   color: #FFFFFF;
 }
@@ -139,7 +140,7 @@ onMounted(() => {
 }
 
 .dataScreen-header .header-lf .header-screening {
-  top: 13px;
+  top: 20%;
   margin: 0 auto;
   font-size: 20px;
   color: #05e8fe;
@@ -166,7 +167,7 @@ onMounted(() => {
 }
 
 .right-font {
-  top: 10px;
+  top: 20%;
   font-size: 20px;
   color: #05e8fe;
 }
@@ -184,7 +185,7 @@ onMounted(() => {
 
 .export {
   float: right;
-  right: 50px;
+  right: 5%;
   margin: 0 auto;
 }
 
@@ -205,7 +206,7 @@ onMounted(() => {
   top: 0;
   left: 0;
   width: 100%;
-  height: 120px;
+  height: 100%;
   font-size: 32px;
   line-height: 78px;
   color: #05e8fe;
@@ -234,21 +235,35 @@ onMounted(() => {
 }
 
 .main {
+  top: 2%;
   margin: 0 auto;
   width: 100%;
 }
 
-.page {
-  float: left;
-  top: 20px;
-  margin-left: 34.5%;
+.el-pagination {
+  top: 3%;
+  justify-content: center;
 }
 
-::v-deep .el-pagination .el-pager li:not(.disabled) {
-  background-color: #FFFFFF;
+:deep(.el-pagination .el-pager li:not(.disabled)) {
+  background-color: #13192f;
+}
+
+:deep(.el-pager li) {
+  color: #FFFFFF;
+}
+
+:deep(.el-pager li.is-active) {
+  color: #05e8fe;
+}
+
+:deep(.el-pagination button) {
+  background-color: #13192f;
+  color: #FFFFFF;
 }
 
 .footer {
+  top: 3%;
   margin: auto;
   font-size: 20px;
   text-align: center;
