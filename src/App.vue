@@ -134,7 +134,7 @@ onMounted(() => {
 
 .dataScreen-header .header-lf {
   width: 32.5%;
-  height: 60px;
+  height: 50%;
   background: url("./assets/dataScreen-header-left-bg.png") no-repeat;
   background-size: 100% 100%;
 }
@@ -142,7 +142,7 @@ onMounted(() => {
 .dataScreen-header .header-lf .header-screening {
   top: 20%;
   margin: 0 auto;
-  font-size: 20px;
+  font-size: 1.25rem;
   color: #05e8fe;
 }
 
@@ -153,7 +153,7 @@ onMounted(() => {
 }
 
 .dataScreen-header .header-right .header-rg {
-  height: 60px;
+  height: 50%;
   background: url("./assets/dataScreen-header-left-bg.png") no-repeat;
   background-size: 100% 100%;
 }
@@ -168,14 +168,14 @@ onMounted(() => {
 
 .right-font {
   top: 20%;
-  font-size: 20px;
+  font-size: 1.25rem;
   color: #05e8fe;
 }
 
 .dataScreen-header .header-rg .header-time {
   top: 13px;
   margin: 0 auto;
-  font-size: 20px;
+  font-size: 1.25rem;
   color: #05e8fe;
 }
 
@@ -230,7 +230,7 @@ onMounted(() => {
 }
 
 .title-font-size {
-  font-size: 50px;
+  font-size: 3.125rem;
   top: 20px;
 }
 
