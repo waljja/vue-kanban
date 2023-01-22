@@ -10,6 +10,7 @@ declare module '@vue/runtime-core' {
     DataTable: typeof import('./src/components/DataTable.vue')['default']
     ElAvatar: typeof import('element-plus/es')['ElAvatar']
     ElButton: typeof import('element-plus/es')['ElButton']
+    ElButtonnc: typeof import('element-plus/es')['ElButtonnc']
     ElConfigProvider: typeof import('element-plus/es')['ElConfigProvider']
     ElContainer: typeof import('element-plus/es')['ElContainer']
     ElDatePicker: typeof import('element-plus/es')['ElDatePicker']

@@ -1,63 +1,3 @@
-<script setup lang="ts">
-import { ref, onMounted } from 'vue'
-
-// 表格
-import DataTable from '../../components/DataTable.vue'
-
-// 鸿通 logo
-import circleUrl from "../../assets/鸿通logo.png";
-
-// element-plus 国际化配置
-import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
-// 公用获取时间函数
-import currentTime from '../../currentTime';
-
-const value1 = ref('')
-const dateTime = ref('')
-
-const shortcuts = [
-  {
-    text: '上周',
-    value: () => {
-      const end = new Date()
-      const start = new Date()
-      start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
-      return [start, end]
-    },
-  },
-  {
-    text: '过去一个月',
-    value: () => {
-      const end = new Date()
-      const start = new Date()
-      start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
-      return [start, end]
-    },
-  },
-  {
-    text: '过去三个月',
-    value: () => {
-      const end = new Date()
-      const start = new Date()
-      start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
-      return [start, end]
-    },
-  },
-]
-
-// 获取当前时间
-const getCurrentTime = function () {
-  dateTime.value = currentTime(new Date())
-}
-
-// 实时获取
-onMounted(() => {
-  setInterval(() => {
-    getCurrentTime()
-  }, 1000)
-})
-</script>
-
 <template>
   <el-config-provider :locale="zhCn">
     <el-container class="container">
@@ -84,27 +24,105 @@ onMounted(() => {
             <div class="date-pick">
               <el-date-picker
                 class="date-picker"
-                v-model="value1"
+                v-model="dateArr"
+                value-format="YYYY.MM.DD"
                 type="daterange"
                 unlink-panels
                 range-separator="--->"
                 start-placeholder="开始日期"
                 end-placeholder="结束日期"
                 size="default"
-                :shortcuts="shortcuts"/>
-              <el-button class="export" type="primary">导出</el-button>
+                :shortcuts="shortcuts"
+              />
+              <el-button class="filter" type="success" @click="filter">筛选</el-button>
+              <el-button class="export" type="primary" @click="exportExcel"
+                >导出</el-button
+              >
             </div>
           </div>
         </div>
       </el-header>
       <el-main class="main">
         <DataTable />
-        <el-pagination layout="prev, pager, next" :total="200" :pager-count="6"/>
+        <el-pagination layout="prev, pager, next" :total="200" :pager-count="6" />
       </el-main>
-      <el-footer class="footer">HonorTone Product-KanBan By IT GuoZhao Ding 2023</el-footer>
+      <el-footer class="footer"
+        >HonorTone Product-KanBan By IT GuoZhao Ding 2023</el-footer
+      >
     </el-container>
   </el-config-provider>
 </template>
+
+<script setup lang="ts">
+import { ref, onMounted } from "vue";
+
+// 表格
+import DataTable from "../../components/DataTable.vue";
+
+// 鸿通 logo
+import circleUrl from "../../assets/鸿通logo.png";
+
+// element-plus 国际化配置
+import zhCn from "element-plus/dist/locale/zh-cn.mjs";
+// 公用获取时间函数
+import currentTime from "../currentTime";
+
+// 日期选择器 开始、结束 日期
+const dateArr = ref("");
+// 实时获取时间
+const dateTime = ref("");
+
+const shortcuts = [
+  {
+    text: "上周",
+    value: () => {
+      const end = new Date();
+      const start = new Date();
+      start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+      return [start, end];
+    },
+  },
+  {
+    text: "过去一个月",
+    value: () => {
+      const end = new Date();
+      const start = new Date();
+      start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+      return [start, end];
+    },
+  },
+  {
+    text: "过去三个月",
+    value: () => {
+      const end = new Date();
+      const start = new Date();
+      start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+      return [start, end];
+    },
+  },
+];
+
+// 获取当前时间
+const getCurrentTime = function () {
+  dateTime.value = currentTime(new Date());
+};
+
+// 根据日期筛选工单信息
+const filter = function () {
+  console.log("开始日期：" + dateArr.value[0]);
+  console.log("结束日期：" + dateArr.value[1]);
+};
+
+// 导出 Excel 报表
+const exportExcel = function () {};
+
+// 实时获取
+onMounted(() => {
+  setInterval(() => {
+    getCurrentTime();
+  }, 1000);
+});
+</script>
 
 <style scoped>
 .container {
@@ -121,14 +139,14 @@ onMounted(() => {
   margin-top: 20px;
   height: 15%;
   text-align: center;
-  color: #FFFFFF;
+  color: #ffffff;
 }
 
 .dataScreen-header {
   display: flex;
   width: 100%;
   height: 100%;
-	font-family: YouSheBiaoTiHei;
+  font-family: YouSheBiaoTiHei;
 }
 
 .dataScreen-header .header-lf {
@@ -182,9 +200,15 @@ onMounted(() => {
   margin-top: 30px;
 }
 
-.export {
+.filter {
   float: right;
-  right: 5%;
+  margin: 0 auto;
+  justify-content: center;
+}
+
+.export {
+  float: left;
+  right: 0;
   margin: 0 auto;
 }
 
@@ -249,7 +273,7 @@ onMounted(() => {
 }
 
 :deep(.el-pager li) {
-  color: #FFFFFF;
+  color: #ffffff;
 }
 
 :deep(.el-pager li.is-active) {
@@ -258,7 +282,7 @@ onMounted(() => {
 
 :deep(.el-pagination button) {
   background-color: #13192f;
-  color: #FFFFFF;
+  color: #ffffff;
 }
 
 .footer {
@@ -266,6 +290,6 @@ onMounted(() => {
   margin: auto;
   font-size: 20px;
   text-align: center;
-  color: #FFFFFF;
+  color: #ffffff;
 }
 </style>
