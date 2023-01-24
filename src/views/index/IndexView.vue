@@ -44,7 +44,13 @@
       </el-header>
       <el-main class="main">
         <DataTable />
-        <el-pagination layout="prev, pager, next" :total="200" :pager-count="6" />
+        <el-pagination
+          v-model:current-page="currentPage"
+          layout="prev, pager, next"
+          :total="200"
+          :pager-count="6"
+          @current-change="handlePageChange()"
+        />
       </el-main>
       <el-footer class="footer"
         >HonorTone Product-KanBan By IT GuoZhao Ding 2023</el-footer
@@ -71,6 +77,8 @@ import currentTime from "../currentTime";
 const dateArr = ref("");
 // 实时获取时间
 const dateTime = ref("");
+// 当前页码
+const currentPage = ref("");
 
 const shortcuts = [
   {
@@ -115,6 +123,11 @@ const filter = function () {
 
 // 导出 Excel 报表
 const exportExcel = function () {};
+
+// 切换页面
+const handlePageChange = function () {
+  console.log("currentPage: " + currentPage.value);
+};
 
 // 实时获取
 onMounted(() => {
