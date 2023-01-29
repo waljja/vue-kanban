@@ -1,4 +1,12 @@
 {
+  "compilerOptions": {
+    // volar 支持 (element-plus)
+    "types": ["element-plus/global"],
+    // 严格模式
+    "strict": true,
+    // 引入文件名大小写必须一致
+    "forceConsistentCasingInFileNames": true
+  },
   "files": [],
   "references": [
     {
@@ -10,9 +18,5 @@
     {
       "path": "./tsconfig.vitest.json"
     }
-  ],
-  "compilerOptions": {
-    // volar 支持 (element-plus)
-    "types": ["element-plus/global"]
-  }
+  ]
 }

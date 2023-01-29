@@ -61,17 +61,19 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
+// element-plus 国际化配置
+import zhCn from "element-plus/dist/locale/zh-cn.mjs";
+// 公用获取时间函数
+import currentTime from "../currentTime";
+// 报表时间获取
+import reportTime from "../../commons/reportTime";
+import axios from "../../axios/axios";
 
 // 表格
 import DataTable from "../../components/DataTable.vue";
 
 // 鸿通 logo
 import circleUrl from "../../assets/鸿通logo.png";
-
-// element-plus 国际化配置
-import zhCn from "element-plus/dist/locale/zh-cn.mjs";
-// 公用获取时间函数
-import currentTime from "../currentTime";
 
 // 日期选择器 开始、结束 日期
 const dateArr = ref("");
@@ -122,7 +124,28 @@ const filter = function () {
 };
 
 // 导出 Excel 报表
-const exportExcel = function () {};
+const exportExcel = async function () {
+  return axios
+    .get("/product/download/report", { responseType: "blob" })
+    .then((res) => {
+      let blob = new Blob([res.data], {
+        // 接收数据类型
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+      // 触发下载链接
+      let link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = "成品入库报表" + reportTime(new Date()) + ".xlsx";
+      link.click();
+      // 移除元素
+      document.body.removeChild(link);
+      // 释放 URL 对象
+      window.URL.revokeObjectURL(link.href);
+    })
+    .catch((e) => {
+      console.log("axios errors: " + e);
+    });
+};
 
 // 切换页面
 const handlePageChange = function () {
