@@ -74,6 +74,7 @@ import DataTable from "../../components/DataTable.vue";
 
 // 鸿通 logo
 import circleUrl from "../../assets/鸿通logo.png";
+import { da } from "element-plus/es/locale";
 
 // 日期选择器 开始、结束 日期
 const dateArr = ref("");
@@ -121,6 +122,19 @@ const getCurrentTime = function () {
 const filter = function () {
   console.log("开始日期：" + dateArr.value[0]);
   console.log("结束日期：" + dateArr.value[1]);
+  // 字符串转为 Date 类型
+  let startDate = new Date(Date.parse(dateArr.value[0].replace(/-/g, "/")))
+  let endDate = new Date(Date.parse(dateArr.value[1].replace(/-/g, "/")))
+  axios.get("/product/get-data", {
+    data: {
+      startDate: startDate,
+      endDate: endDate
+    }
+  }).then(res => {
+    console.log(res.data);
+  }).catch(e => {
+    console.log("获取数据接口错误：" + e);
+  });
 };
 
 // 导出 Excel 报表
