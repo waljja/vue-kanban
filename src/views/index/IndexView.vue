@@ -43,11 +43,12 @@
         </div>
       </el-header>
       <el-main class="main">
-        <DataTable :data="records.data" />
+        <DataTable :data="records" />
         <el-pagination
           v-model:current-page="currentPage"
           layout="prev, pager, next"
-          :total="200"
+          :total="total"
+          :page-size="20"
           :pager-count="6"
           @current-change="handlePageChange()"
         />
@@ -60,7 +61,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from "vue";
+import { ref, onMounted } from "vue";
 // element-plus 国际化配置
 import zhCn from "element-plus/dist/locale/zh-cn.mjs";
 // 公用获取时间函数
@@ -79,13 +80,8 @@ import circleUrl from "../../assets/鸿通logo.png";
 const dateArr = ref("");
 // 实时获取时间
 const dateTime = ref("");
-// 表格分页数据
-const records = reactive({
-  data: []
-})
 // 当前页码
 const currentPage = ref("");
-
 const shortcuts = [
   {
     text: "上周",
@@ -115,14 +111,33 @@ const shortcuts = [
     },
   },
 ];
+// 表格分页数据
+var records = ref([])
+// 返回总记录数
+var total = ref(20)
 
 // 获取当前时间
-const getCurrentTime = function () {
+const getCurrentTime = () => {
   dateTime.value = currentTime(new Date());
 };
 
+// 初始化表格数据
+const initTable = () => {
+  axios.get("/product/get-data", {
+    params: {
+      current: 1
+    }
+  }).then(res => {
+    records.value = res.data.data.records;
+    total.value = res.data.data.total
+  }).catch(error => {
+    console.log("获取数据接口错误：" + error);
+  });
+}
+initTable()
+
 // 根据日期筛选工单信息
-const filter = function () {
+const filter = () => {
   axios.get("/product/get-data", {
     params: {
       current: 1,
@@ -131,14 +146,15 @@ const filter = function () {
     }
   }).then(res => {
     console.log(res.data.data.records);
-    records.data = res.data.data.records;
+    records.value = res.data.data.records;
+    total.value = res.data.data.total
   }).catch(error => {
     console.log("获取数据接口错误：" + error);
   });
 };
 
 // 导出 Excel 报表
-const exportExcel = async function () {
+const exportExcel = async () => {
   return axios.get("/product/download/report", { responseType: "blob" }).then((res) => {
       let blob = new Blob([res.data], {
         // 接收数据类型
@@ -159,7 +175,7 @@ const exportExcel = async function () {
 };
 
 // 切换页面
-const handlePageChange = function () {
+const handlePageChange = () => {
   console.log("currentPage: " + currentPage.value);
   axios.get("product/get-data", {
     params: {
@@ -169,7 +185,7 @@ const handlePageChange = function () {
     }
   }).then(res => {
     console.log(res.data.data.records)
-    records.data = res.data.data.records
+    records.value = res.data.data.records
   }).catch(error => {
     console.log("获取数据接口错误：" + error)
   })
@@ -180,6 +196,16 @@ onMounted(() => {
   setInterval(() => {
     getCurrentTime();
   }, 1000);
+  axios.get("/product/get-data", {
+    params: {
+      current: 1
+    }
+  }).then(res => {
+    records.value = res.data.data.records;
+    total.value = res.data.data.total
+  }).catch(error => {
+    console.log("获取数据接口错误：" + error);
+  });
 });
 </script>
 
