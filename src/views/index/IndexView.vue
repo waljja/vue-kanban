@@ -112,9 +112,9 @@ const shortcuts = [
   },
 ];
 // 表格分页数据
-var records = ref([])
+var records = ref([]);
 // 返回总记录数
-var total = ref(20)
+var total = ref(20);
 
 // 获取当前时间
 const getCurrentTime = () => {
@@ -123,39 +123,47 @@ const getCurrentTime = () => {
 
 // 初始化表格数据
 const initTable = () => {
-  axios.get("/product/get-data", {
-    params: {
-      current: 1
-    }
-  }).then(res => {
-    records.value = res.data.data.records;
-    total.value = res.data.data.total
-  }).catch(error => {
-    console.log("获取数据接口错误：" + error);
-  });
-}
-initTable()
+  axios
+    .get("/product/get-data", {
+      params: {
+        current: 1,
+      },
+    })
+    .then((res) => {
+      records.value = res.data.data.records;
+      total.value = res.data.data.total;
+    })
+    .catch((error) => {
+      console.log("获取数据接口错误：" + error);
+    });
+};
+initTable();
 
 // 根据日期筛选工单信息
 const filter = () => {
-  axios.get("/product/get-data", {
-    params: {
-      current: 1,
-      startDate: dateArr.value[0],
-      endDate: dateArr.value[1]
-    }
-  }).then(res => {
-    console.log(res.data.data.records);
-    records.value = res.data.data.records;
-    total.value = res.data.data.total
-  }).catch(error => {
-    console.log("获取数据接口错误：" + error);
-  });
+  axios
+    .get("/product/get-data", {
+      params: {
+        current: 1,
+        startDate: dateArr.value[0],
+        endDate: dateArr.value[1],
+      },
+    })
+    .then((res) => {
+      console.log(res.data.data.records);
+      records.value = res.data.data.records;
+      total.value = res.data.data.total;
+    })
+    .catch((error) => {
+      console.log("获取数据接口错误：" + error);
+    });
 };
 
 // 导出 Excel 报表
 const exportExcel = async () => {
-  return axios.get("/product/download/report", { responseType: "blob" }).then((res) => {
+  return axios
+    .get("/product/download/report", { responseType: "blob" })
+    .then((res) => {
       let blob = new Blob([res.data], {
         // 接收数据类型
         type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
@@ -169,7 +177,8 @@ const exportExcel = async () => {
       document.body.removeChild(link);
       // 释放 URL 对象
       window.URL.revokeObjectURL(link.href);
-    }).catch((error) => {
+    })
+    .catch((error) => {
       console.log("axios errors: " + error);
     });
 };
@@ -177,18 +186,21 @@ const exportExcel = async () => {
 // 切换页面
 const handlePageChange = () => {
   console.log("currentPage: " + currentPage.value);
-  axios.get("product/get-data", {
-    params: {
-      current: currentPage.value,
-      startDate: dateArr.value[0],
-      endDate: dateArr.value[1]
-    }
-  }).then(res => {
-    console.log(res.data.data.records)
-    records.value = res.data.data.records
-  }).catch(error => {
-    console.log("获取数据接口错误：" + error)
-  })
+  axios
+    .get("product/get-data", {
+      params: {
+        current: currentPage.value,
+        startDate: dateArr.value[0],
+        endDate: dateArr.value[1],
+      },
+    })
+    .then((res) => {
+      console.log(res.data.data.records);
+      records.value = res.data.data.records;
+    })
+    .catch((error) => {
+      console.log("获取数据接口错误：" + error);
+    });
 };
 
 // 实时获取
@@ -196,16 +208,19 @@ onMounted(() => {
   setInterval(() => {
     getCurrentTime();
   }, 1000);
-  axios.get("/product/get-data", {
-    params: {
-      current: 1
-    }
-  }).then(res => {
-    records.value = res.data.data.records;
-    total.value = res.data.data.total
-  }).catch(error => {
-    console.log("获取数据接口错误：" + error);
-  });
+  axios
+    .get("/product/get-data", {
+      params: {
+        current: 1,
+      },
+    })
+    .then((res) => {
+      records.value = res.data.data.records;
+      total.value = res.data.data.total;
+    })
+    .catch((error) => {
+      console.log("获取数据接口错误：" + error);
+    });
 });
 </script>
 
