@@ -25,7 +25,7 @@
               <el-date-picker
                 class="date-picker"
                 v-model="dateArr"
-                value-format="YYYY.MM.DD"
+                value-format="YYYY-MM-DD"
                 type="daterange"
                 unlink-panels
                 range-separator="--->"
@@ -43,7 +43,7 @@
         </div>
       </el-header>
       <el-main class="main">
-        <DataTable />
+        <DataTable :data="records.data" />
         <el-pagination
           v-model:current-page="currentPage"
           layout="prev, pager, next"
@@ -60,7 +60,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { ref, reactive, onMounted } from "vue";
 // element-plus 国际化配置
 import zhCn from "element-plus/dist/locale/zh-cn.mjs";
 // 公用获取时间函数
@@ -74,12 +74,15 @@ import DataTable from "../../components/DataTable.vue";
 
 // 鸿通 logo
 import circleUrl from "../../assets/鸿通logo.png";
-import { da } from "element-plus/es/locale";
 
 // 日期选择器 开始、结束 日期
 const dateArr = ref("");
 // 实时获取时间
 const dateTime = ref("");
+// 表格分页数据
+const records = reactive({
+  data: []
+})
 // 当前页码
 const currentPage = ref("");
 
@@ -120,28 +123,23 @@ const getCurrentTime = function () {
 
 // 根据日期筛选工单信息
 const filter = function () {
-  console.log("开始日期：" + dateArr.value[0]);
-  console.log("结束日期：" + dateArr.value[1]);
-  // 字符串转为 Date 类型
-  let startDate = new Date(Date.parse(dateArr.value[0].replace(/-/g, "/")))
-  let endDate = new Date(Date.parse(dateArr.value[1].replace(/-/g, "/")))
   axios.get("/product/get-data", {
-    data: {
-      startDate: startDate,
-      endDate: endDate
+    params: {
+      current: 1,
+      startDate: dateArr.value[0],
+      endDate: dateArr.value[1]
     }
   }).then(res => {
-    console.log(res.data);
-  }).catch(e => {
-    console.log("获取数据接口错误：" + e);
+    console.log(res.data.data.records);
+    records.data = res.data.data.records;
+  }).catch(error => {
+    console.log("获取数据接口错误：" + error);
   });
 };
 
 // 导出 Excel 报表
 const exportExcel = async function () {
-  return axios
-    .get("/product/download/report", { responseType: "blob" })
-    .then((res) => {
+  return axios.get("/product/download/report", { responseType: "blob" }).then((res) => {
       let blob = new Blob([res.data], {
         // 接收数据类型
         type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
@@ -155,15 +153,26 @@ const exportExcel = async function () {
       document.body.removeChild(link);
       // 释放 URL 对象
       window.URL.revokeObjectURL(link.href);
-    })
-    .catch((e) => {
-      console.log("axios errors: " + e);
+    }).catch((error) => {
+      console.log("axios errors: " + error);
     });
 };
 
 // 切换页面
 const handlePageChange = function () {
   console.log("currentPage: " + currentPage.value);
+  axios.get("product/get-data", {
+    params: {
+      current: currentPage.value,
+      startDate: dateArr.value[0],
+      endDate: dateArr.value[1]
+    }
+  }).then(res => {
+    console.log(res.data.data.records)
+    records.data = res.data.data.records
+  }).catch(error => {
+    console.log("获取数据接口错误：" + error)
+  })
 };
 
 // 实时获取

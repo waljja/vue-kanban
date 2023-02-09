@@ -1,46 +1,67 @@
 <template>
   <el-table class="table" 
     size="small"
-    :data="data.tableData" 
     :header-row-style="headerStyle"
     :header-cell-style="headerCellStyle"
     :row-class-name="tableRowClassName">
     <el-table-column prop="item" label="Item" width="180" align="center" sortable/>
     <el-table-column 
-      prop="partnumber" 
+      prop="partNumber" 
       label="PartNumber" 
       width="180" 
       align="center" 
       :filters="pnFilters"
-      :filter-method="filterHandler"/>
-    <el-table-column prop="batchId" label="批次号" align="center"/>
-    <el-table-column prop="uid" label="工单" align="center" :filters="woFilters" :filter-method="filterHandler"/>
-    <el-table-column prop="receivingnumber" label="数量" align="center"/>
-    <el-table-column prop="receivingTime" label="收货时间" align="center" sortable/>
-    <el-table-column prop="state" label="状态" align="center" :filters="stateFilters" :filter-method="filterHandler"/>
+      :filter-method="filterHandler" />
+    <el-table-column prop="batchId" label="批次号" align="center" />
+    <el-table-column prop="uid" label="工单" align="center" :filters="woFilters" :filter-method="filterHandler" />
+    <el-table-column prop="receivingnumber" label="数量" align="center" />
+    <el-table-column prop="recTime" label="收货时间" align="center" sortable />
+    <el-table-column prop="state" label="状态" align="center" :filters="stateFilters" :filter-method="filterHandler" />
   </el-table>
 </template>
 
 <script lang="ts" setup>
-import { reactive, computed } from "vue";
+import { computed } from "vue";
 import type { TableColumnCtx } from "element-plus";
 
-interface User {
+interface Product {
   [key: string]: any
   item: number
-  partnumber: string
-  batchId: string
+  partNumber: string
+  wo: string
   uid: string
-  receivingnumber: number
-  receivingTime: string
-  state: string
+  batch: string
+  quantity: number
+  plant: string
+  status: string
+  stock: string
+  recTime: string
 }
+
+// 父组件传递数组
+const props = defineProps<{
+  data: [{
+    [key: string]: any
+    item: number
+    partNumber: string
+    wo: string
+    uid: string
+    batch: string
+    quantity: number
+    plant: string
+    status: string
+    stock: string
+    recTime: string
+  }]
+}>()
+
+const tableData = computed(() => props.data)
 
 const tableRowClassName = ({
   row,
   rowIndex,
 }: {
-  row: User
+  row: Product
   rowIndex: number
 }) => {
   if (rowIndex === 0 || rowIndex === 4 || rowIndex === 7 || rowIndex === 16) {
@@ -57,191 +78,6 @@ const headerStyle = ({
 
 const headerCellStyle = ({
   padding: 0
-})
-
-const data = reactive({
-  tableData: [
-    {
-      item: 1,
-      partnumber: '620-PURP004-00R1',
-      batchId: '000001',
-      uid: '000001596045',
-      receivingnumber: 100,
-      receivingTime: '2016-05-03',
-      state: '1'
-    },
-    {
-      item: 2,
-      partnumber: '620-PURP004-00R1',
-      batchId: '000002',
-      uid: '000001611303',
-      receivingnumber: 200,
-      receivingTime: '2016-05-02',
-      state: '3'
-    },
-    {
-      item: 3,
-      partnumber: '620-PURP004-00R1',
-      batchId: '000003',
-      uid: '000001605630',
-      receivingnumber: 300,
-      receivingTime: '2016-05-04',
-      state: '2'
-    },
-    {
-      item: 4,
-      partnumber: '610-LT10002-00R1',
-      batchId: '000004',
-      uid: '000001605630',
-      receivingnumber: 400,
-      receivingTime: '2016-05-01',
-      state: '0'
-    },
-    {
-      item: 5,
-      partnumber: '610-LT10002-00R1',
-      batchId: '000005',
-      uid: '000001605630',
-      receivingnumber: 400,
-      receivingTime: '2016-05-01',
-      state: '0'
-    },
-    {
-      item: 6,
-      partnumber: '610-LT10002-00R1',
-      batchId: '000394',
-      uid: '000001605630',
-      receivingnumber: 400,
-      receivingTime: '2016-05-01',
-      state: '0'
-    },
-    {
-      item: 7,
-      partnumber: '610-TAGA001-00R1',
-      batchId: '00009',
-      uid: '000001605630',
-      receivingnumber: 400,
-      receivingTime: '2016-05-01',
-      state: '0'
-    },
-    {
-      item: 8,
-      partnumber: '620-PURP004-00R1',
-      batchId: '000393',
-      uid: '000001605630',
-      receivingnumber: 400,
-      receivingTime: '2016-05-01',
-      state: '0'
-    },
-    {
-      item: 9,
-      partnumber: '620-PURP004-00R1',
-      batchId: '000028',
-      uid: '000001605630',
-      receivingnumber: 400,
-      receivingTime: '2016-05-01',
-      state: '0'
-    },
-    {
-      item: 10,
-      partnumber: '610-TAGA001-00R1',
-      batchId: '000175',
-      uid: '000001605630',
-      receivingnumber: 400,
-      receivingTime: '2016-05-01',
-      state: '0'
-    },
-    {
-      item: 11,
-      partnumber: '620-PURP004-00R1',
-      batchId: '000174',
-      uid: '000001605630',
-      receivingnumber: 400,
-      receivingTime: '2016-05-01',
-      state: '0'
-    },
-    {
-      item: 12,
-      partnumber: '620-LUHE001-00R3',
-      batchId: '15',
-      uid: '000001605630',
-      receivingnumber: 400,
-      receivingTime: '2016-05-01',
-      state: '0'
-    },
-    {
-      item: 13,
-      partnumber: '620-LUHE001-00R3',
-      batchId: '00001',
-      uid: '000001605630',
-      receivingnumber: 400,
-      receivingTime: '2016-05-01',
-      state: '0'
-    },
-    {
-      item: 14,
-      partnumber: '620-PURP004-00R1',
-      batchId: '00007',
-      uid: '000001605630',
-      receivingnumber: 400,
-      receivingTime: '2016-05-01',
-      state: '0'
-    },
-    {
-      item: 15,
-      partnumber: '620-PURP004-00R1',
-      batchId: '000030',
-      uid: '000001605630',
-      receivingnumber: 400,
-      receivingTime: '2016-05-01',
-      state: '0'
-    },
-    {
-      item: 16,
-      partnumber: '620-PURP004-00R1',
-      batchId: '000031',
-      uid: '000001605630',
-      receivingnumber: 400,
-      receivingTime: '2016-05-01',
-      state: '0'
-    },
-    {
-      item: 17,
-      partnumber: '620-PURP004-00R1',
-      batchId: '000169',
-      uid: '000001605630',
-      receivingnumber: 400,
-      receivingTime: '2016-05-01',
-      state: '0'
-    },
-    {
-      item: 17,
-      partnumber: '620-PURP004-00R1',
-      batchId: '000169',
-      uid: '000001605630',
-      receivingnumber: 400,
-      receivingTime: '2016-05-01',
-      state: '0'
-    },
-    {
-      item: 17,
-      partnumber: '620-PURP004-00R1',
-      batchId: '000169',
-      uid: '000001605630',
-      receivingnumber: 400,
-      receivingTime: '2016-05-01',
-      state: '0'
-    },
-    {
-      item: 17,
-      partnumber: '620-PURP004-00R1',
-      batchId: '000169',
-      uid: '000001605630',
-      receivingnumber: 400,
-      receivingTime: '2016-05-01',
-      state: '0'
-    },
-  ]
 })
 
 // filters 去重
@@ -264,8 +100,8 @@ const distinct = (array: string[]) => {
 const pnFilters = computed(() => {
   let pnArr: string[] = []
   // 所有 partNumber 抽出来装入集合
-  data.tableData.forEach(item => {
-    pnArr.push(item.partnumber)
+  tableData.value.forEach(item => {
+    pnArr.push(item.partNumber)
   })
   // 去重
   return distinct(pnArr)
@@ -275,7 +111,7 @@ const pnFilters = computed(() => {
 const woFilters = computed(() => {
   let woArr: string[] = []
   // 所有工单抽出来装入集合
-  data.tableData.forEach(item => {
+  tableData.value.forEach(item => {
     woArr.push(item.uid)
   })
   // 去重
@@ -286,16 +122,17 @@ const woFilters = computed(() => {
 const stateFilters = computed(() => {
   let stateArr: string[] = []
   // 所有工单抽出来装入集合
-  data.tableData.forEach(item => {
+  tableData.value.forEach(item => {
     stateArr.push(item.state)
   })
   // 去重
   return distinct(stateArr)
 })
+
 const filterHandler = (
   value: any,
-  row: User,
-  column: TableColumnCtx<User>
+  row: Product,
+  column: TableColumnCtx<Product>
 ) => {
   const property = column['property']
   return row[property] === value
