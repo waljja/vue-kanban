@@ -7,30 +7,30 @@
     :row-class-name="tableRowClassName"
   >
     <el-table-column prop="item" label="Item" width="180" align="center" sortable />
-    <!-- :filters="pnFilters" -->
     <el-table-column
       prop="partNumber"
       label="PartNumber"
       width="180"
       align="center"
+      :filters="pnFilters"
       :filter-method="filterHandler"
     />
-    <!-- :filters="woFilters"  -->
     <el-table-column
       prop="wo"
       label="工单"
       align="center"
+      :filters="woFilters"
       :filter-method="filterHandler"
     />
     <el-table-column prop="uid" label="UID" align="center" />
     <el-table-column prop="batch" label="批次号" align="center" />
     <el-table-column prop="quantity" label="数量" align="center" />
     <el-table-column prop="plant" label="工厂" align="center" />
-    <!-- :filters="stateFilters"  -->
     <el-table-column
       prop="state"
       label="状态"
       align="center"
+      :filters="stateFilters"
       :filter-method="filterHandler"
     />
     <el-table-column
@@ -44,9 +44,10 @@
 </template>
 
 <script lang="ts" setup>
+import { computed } from "vue";
 import type { TableColumnCtx } from "element-plus";
 
-interface Product {
+export interface Product {
   [key: string]: any;
   item: number;
   partNumber: string;
@@ -55,25 +56,27 @@ interface Product {
   batch: string;
   quantity: number;
   plant: string;
-  state: number;
+  state: string;
   storageLoc: string;
   recTime: string;
 }
 
 // 父组件传递数组
-// const props = defineProps<{
-//   data: Object[]
-// }>()
+const props = defineProps<{
+  records: Product[];
+}>();
 
-// const tableData = computed(() => props.data)
+const tableData = computed(() => props.records);
+
+console.log("tableData:" + props.records);
 
 const tableRowClassName = ({ row }: { row: Product; rowIndex: number }) => {
-  if (row.state === 2) {
-    return "warning-row";
-  } else if (row.state === 0) {
+  if (row.state === "预留") {
     return "send-row";
+  } else if (row.state === "在库") {
+    return "in-stock-row";
   }
-  return "success-row";
+  return "in-stock-row";
 };
 
 const headerStyle = {
@@ -86,54 +89,54 @@ const headerCellStyle = {
   padding: 0,
 };
 
-// // filters 去重
-// const distinct = (array: string[]) => {
-//   let distinctArr: string[] = []
-//   let newArr: object[] = []
-//   // 去重
-//   distinctArr = Array.from(new Set(array))
-//   // 装入 filters 数组
-//   distinctArr.forEach(item => {
-//     newArr.push({
-//       text: item,
-//       value: item
-//     })
-//   })
-//   return newArr
-// }
+// filters 去重
+const distinct = (array: string[]) => {
+  let distinctArr: string[] = [];
+  let newArr: object[] = [];
+  // 去重
+  distinctArr = Array.from(new Set(array));
+  // 装入 filters 数组
+  distinctArr.forEach((item) => {
+    newArr.push({
+      text: item,
+      value: item,
+    });
+  });
+  return newArr;
+};
 
-// // partNumber 去重
-// const pnFilters = computed(() => {
-//   let pnArr: string[] = []
-//   // 所有 partNumber 抽出来装入集合
-//   tableData.value.forEach(item => {
-//     pnArr.push(item.partNumber)
-//   })
-//   // 去重
-//   return distinct(pnArr)
-// })
+// partNumber 去重
+const pnFilters = computed(() => {
+  let pnArr: string[] = [];
+  // 所有 partNumber 抽出来装入集合
+  tableData.value.forEach((item) => {
+    pnArr.push(item.partNumber);
+  });
+  // 去重
+  return distinct(pnArr);
+});
 
-// // 工单去重
-// const woFilters = computed(() => {
-//   let woArr: string[] = []
-//   // 所有工单抽出来装入集合
-//   tableData.value.forEach(item => {
-//     woArr.push(item.uid)
-//   })
-//   // 去重
-//   return distinct(woArr)
-// })
+// 工单去重
+const woFilters = computed(() => {
+  let woArr: string[] = [];
+  // 所有工单抽出来装入集合
+  tableData.value.forEach((item) => {
+    woArr.push(item.wo);
+  });
+  // 去重
+  return distinct(woArr);
+});
 
-// // 状态去重
-// const stateFilters = computed(() => {
-//   let stateArr: string[] = []
-//   // 所有工单抽出来装入集合
-//   tableData.value.forEach(item => {
-//     stateArr.push(item.state)
-//   })
-//   // 去重
-//   return distinct(stateArr)
-// })
+// 状态去重
+const stateFilters = computed(() => {
+  let stateArr: string[] = [];
+  // 所有工单抽出来装入集合
+  tableData.value.forEach((item) => {
+    stateArr.push(item.state.toString());
+  });
+  // 去重
+  return distinct(stateArr);
+});
 
 const filterHandler = (value: any, row: Product, column: TableColumnCtx<Product>) => {
   const property = column["property"];
@@ -150,7 +153,7 @@ const filterHandler = (value: any, row: Product, column: TableColumnCtx<Product>
   --el-table-tr-bg-color: #dc143c;
 }
 
-.el-table .success-row {
+.el-table .in-stock-row {
   --el-table-tr-bg-color: #13192f;
 }
 

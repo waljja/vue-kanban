@@ -4,7 +4,7 @@
       <el-header class="header">
         <div class="dataScreen-header">
           <div class="header-lf">
-            <el-avatar class="logo" :size="40" :src="circleUrl" />
+            <el-avatar class="logo" :size="43" :src="circleUrl" />
             <div class="header-logo">
               <span class="header-screening">鸿通</span>
             </div>
@@ -19,7 +19,7 @@
               <div class="header-rg-f">
                 <span class="right-font">MES</span>
               </div>
-              <span class="header-time">当前时间：{{ dateTime }}</span>
+              <span class="header-time">当前时间: {{ dateTime }}</span>
             </div>
             <div class="date-pick">
               <el-date-picker
@@ -43,36 +43,31 @@
         </div>
       </el-header>
       <el-main class="main">
-        <DataTable :data="records" />
+        <DataTable :data="records" :records="records" />
         <el-pagination
           v-model:current-page="currentPage"
           layout="prev, pager, next"
           :total="total"
           :page-size="20"
-          :pager-count="6"
+          :pager-count="21"
           @current-change="handlePageChange()"
         />
       </el-main>
-      <el-footer class="footer"
-        >HonorTone Product-KanBan By IT GuoZhao Ding 2023</el-footer
-      >
     </el-container>
   </el-config-provider>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
-// element-plus 国际化配置
+// element-plus 国际化
 import zhCn from "element-plus/dist/locale/zh-cn.mjs";
 // 公用获取时间函数
 import currentTime from "../currentTime";
 // 报表时间获取
 import reportTime from "../../commons/reportTime";
 import axios from "../../axios/axios";
-
 // 表格
-import DataTable from "../../components/DataTable.vue";
-
+import DataTable from "../../components/StockDataTable.vue";
 // 鸿通 logo
 import circleUrl from "../../assets/鸿通logo.png";
 
@@ -81,7 +76,11 @@ const dateArr = ref("");
 // 实时获取时间
 const dateTime = ref("");
 // 当前页码
-const currentPage = ref("");
+const currentPage = ref();
+// 表格分页数据
+var records = ref([]);
+// 返回总记录数
+var total = ref(20);
 const shortcuts = [
   {
     text: "上周",
@@ -111,10 +110,6 @@ const shortcuts = [
     },
   },
 ];
-// 表格分页数据
-var records = ref([]);
-// 返回总记录数
-var total = ref(20);
 
 // 获取当前时间
 const getCurrentTime = () => {
@@ -124,7 +119,7 @@ const getCurrentTime = () => {
 // 初始化表格数据
 const initTable = () => {
   axios
-    .get("/product/get-data", {
+    .get("/kanban/product-storage/get-data", {
       params: {
         current: 1,
       },
@@ -132,9 +127,10 @@ const initTable = () => {
     .then((res) => {
       records.value = res.data.data.records;
       total.value = res.data.data.total;
+      console.log(records.value);
     })
     .catch((error) => {
-      console.log("获取数据接口错误：" + error);
+      console.log(error);
     });
 };
 initTable();
@@ -142,7 +138,7 @@ initTable();
 // 根据日期筛选工单信息
 const filter = () => {
   axios
-    .get("/product/get-data", {
+    .get("/kanban/product-storage/get-data", {
       params: {
         current: 1,
         startDate: dateArr.value[0],
@@ -162,7 +158,7 @@ const filter = () => {
 // 导出 Excel 报表
 const exportExcel = async () => {
   return axios
-    .get("/product/download/report", { responseType: "blob" })
+    .get("/product/report/download", { responseType: "blob" })
     .then((res) => {
       let blob = new Blob([res.data], {
         // 接收数据类型
@@ -187,7 +183,7 @@ const exportExcel = async () => {
 const handlePageChange = () => {
   console.log("currentPage: " + currentPage.value);
   axios
-    .get("product/get-data", {
+    .get("/kanban/product-storage/get-data", {
       params: {
         current: currentPage.value,
         startDate: dateArr.value[0],
@@ -209,7 +205,7 @@ onMounted(() => {
     getCurrentTime();
   }, 1000);
   axios
-    .get("/product/get-data", {
+    .get("/kanban/product-storage/get-data", {
       params: {
         current: 1,
       },
@@ -251,22 +247,22 @@ onMounted(() => {
 
 .dataScreen-header .header-lf {
   width: 32.5%;
-  height: 50%;
+  height: 40%;
   background: url("../../assets/dataScreen-header-left-bg.png") no-repeat;
   background-size: 100% 100%;
 }
 
 .dataScreen-header .header-lf .header-screening {
-  top: 20%;
+  top: 15%;
   margin: 0 auto;
-  font-size: 1.25rem;
+  font-size: 1.5rem;
   color: #05e8fe;
 }
 
 .dataScreen-header .header-right {
   position: relative;
   width: 32.5%;
-  height: 120px;
+  height: 80%;
 }
 
 .dataScreen-header .header-right .header-rg {
@@ -284,15 +280,15 @@ onMounted(() => {
 }
 
 .right-font {
-  top: 20%;
-  font-size: 1.25rem;
+  top: 15%;
+  font-size: 1.5rem;
   color: #05e8fe;
 }
 
 .dataScreen-header .header-rg .header-time {
-  top: 13px;
+  top: 15%;
   margin: 0 auto;
-  font-size: 1.25rem;
+  font-size: 1.5rem;
   color: #05e8fe;
 }
 
@@ -321,7 +317,7 @@ onMounted(() => {
   position: relative;
   flex: 1;
   width: 35%;
-  height: 100%;
+  height: 80%;
 }
 
 .dataScreen-header .header-ct .header-ct-title {
@@ -353,18 +349,19 @@ onMounted(() => {
 }
 
 .title-font-size {
-  font-size: 3.125rem;
-  top: 20px;
+  font-size: 3.8rem;
+  top: 15px;
 }
 
 .main {
-  top: 2%;
+  top: 0;
   margin: 0 auto;
+  padding-top: 0;
   width: 100%;
 }
 
 .el-pagination {
-  top: 3%;
+  top: 5%;
   justify-content: center;
 }
 
@@ -382,14 +379,6 @@ onMounted(() => {
 
 :deep(.el-pagination button) {
   background-color: #13192f;
-  color: #ffffff;
-}
-
-.footer {
-  top: 3%;
-  margin: auto;
-  font-size: 20px;
-  text-align: center;
   color: #ffffff;
 }
 </style>
