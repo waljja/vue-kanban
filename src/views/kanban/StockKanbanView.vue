@@ -158,7 +158,14 @@ const filter = () => {
 // 导出 Excel 报表
 const exportExcel = async () => {
   return axios
-    .get("/product/report/download", { responseType: "blob" })
+    .get("/kanban/stock-report/download", {
+      params: {
+        current: 1,
+        startDate: dateArr.value[0],
+        endDate: dateArr.value[1],
+      },
+      responseType: "blob",
+    })
     .then((res) => {
       let blob = new Blob([res.data], {
         // 接收数据类型
@@ -204,23 +211,20 @@ onMounted(() => {
   setInterval(() => {
     getCurrentTime();
   }, 1000);
-  axios
-    .get("/kanban/product-storage/get-data", {
-      params: {
-        current: 1,
-      },
-    })
-    .then((res) => {
-      records.value = res.data.data.records;
-      total.value = res.data.data.total;
-    })
-    .catch((error) => {
-      console.log("获取数据接口错误：" + error);
-    });
+  // 5S刷新一次看板数据
+  setInterval(async () => {
+    console.log("refresh data: " + new Date().toLocaleTimeString());
+    initTable();
+  }, 5000);
 });
 </script>
 
 <style scoped>
+@font-face {
+  font-family: YouSheBiaoTiHei;
+  src: url(../../commons/fonts/YouSheBiaoTiHei-2.ttf);
+}
+
 .container {
   top: 0;
   left: 0;
