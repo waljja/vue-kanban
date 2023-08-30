@@ -52,7 +52,6 @@
 <script lang="ts" setup>
 import { computed, defineEmits } from "vue";
 import type { TableColumnCtx } from "element-plus";
-import { fa, ro } from "element-plus/es/locale";
 
 export interface Shipment {
   [key: string]: any;
@@ -64,7 +63,7 @@ export interface Shipment {
   shipmentQty: number;
   boxQty: number;
   palletQty: number;
-  partNumberList: Array<never>;
+  partNumberList: [];
 }
 
 // 父组件传递数组
@@ -100,7 +99,8 @@ const headerCellStyle = {
 // 鼠标移入行时显示 零部件号
 const hoverRow = ({ row }: { row: Shipment; rowIndex: number }) => {
   console.log("66");
-  popMethods("showPop", true, row.partNumberList);
+  console.log(row);
+  popMethods("showPop", true);
 };
 
 // 鼠标移出行时弹窗消失

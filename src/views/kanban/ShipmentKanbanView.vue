@@ -125,11 +125,10 @@ const shortcuts = [
 ];
 
 // 展示弹窗
-const showPop = (isShow: boolean, partNumber: Array<never>) => {
+const showPop = (isShow: boolean) => {
   visible.value = isShow;
   // content.value = partNumber;
   console.log("show");
-  console.log(partNumber);
 };
 
 // 移除弹窗
