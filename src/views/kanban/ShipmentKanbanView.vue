@@ -43,7 +43,17 @@
         </div>
       </el-header>
       <el-main class="main">
-        <DataTable :data="records" :records="records" />
+        <el-popover
+          title="零部件号"
+          placement="top-start"
+          transition="transition"
+          :width="200"
+          :visible="visible"
+          content="this is content, this is content, this is content"
+        >
+          <template #reference><div></div></template>
+        </el-popover>
+        <ShipmentDataTable :data="records" :records="records" @showPop="showPop" @removePop="removePop" />
         <el-pagination
           v-model:current-page="currentPage"
           layout="prev, pager, next"
@@ -67,7 +77,7 @@ import currentTime from "../currentTime";
 import reportTime from "../../commons/reportTime";
 import axios from "../../axios/axios";
 // 表格
-import DataTable from "../../components/StockDataTable.vue";
+import ShipmentDataTable from "../../components/ShipmentDataTable.vue";
 // 鸿通 logo
 import circleUrl from "../../assets/鸿通logo.png";
 
@@ -81,6 +91,9 @@ const currentPage = ref();
 var records = ref([]);
 // 返回总记录数
 var total = ref(20);
+// 浮窗提示是否显示
+const visible = ref(true);
+const content = ref([]);
 const shortcuts = [
   {
     text: "上周",
@@ -110,6 +123,20 @@ const shortcuts = [
     },
   },
 ];
+
+// 展示弹窗
+const showPop = (isShow: boolean, partNumber: Array<never>) => {
+  visible.value = isShow;
+  // content.value = partNumber;
+  console.log("show");
+  console.log(partNumber);
+};
+
+// 移除弹窗
+const removePop = (isShow: boolean) => {
+  visible.value = isShow;
+  console.log("remove");
+}
 
 // 获取当前时间
 const getCurrentTime = () => {
@@ -204,18 +231,18 @@ onMounted(() => {
   setInterval(() => {
     getCurrentTime();
   }, 1000);
-  // 5S刷新一次看板数据
+  // 1分钟刷新一次看板数据
   setInterval(async () => {
     console.log("refresh data: " + new Date().toLocaleTimeString());
     initTable();
-  }, 5000);
+  }, 60000);
 });
 </script>
 
 <style scoped>
 @font-face {
-  font-family: YouSheBiaoTiHei;
-  src: url(../../commons/fonts/YouSheBiaoTiHei-2.ttf);
+  font-family: YouSheBiaoTiHei2;
+  src: url("../../commons/fonts/YouSheBiaoTiHei-2.ttf");
 }
 
 .container {
@@ -239,7 +266,7 @@ onMounted(() => {
   display: flex;
   width: 100%;
   height: 100%;
-  font-family: YouSheBiaoTiHei;
+  font-family: YouSheBiaoTiHei2;
 }
 
 .dataScreen-header .header-lf {

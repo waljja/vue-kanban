@@ -5,27 +5,37 @@
     :header-row-style="headerStyle"
     :header-cell-style="headerCellStyle"
     :row-class-name="tableRowClassName"
+    @cell-mouse-enter="hoverRow"
+    @cell-mouse-leave="leaveRow"
   >
-    <el-table-column prop="item" label="Item" width="180" align="center" sortable />
     <el-table-column
-      prop="partNumber"
-      label="PartNumber"
+      prop="shipmentDate"
+      label="出货日期"
       width="180"
       align="center"
-      :filters="pnFilters"
+      sortable
+    />
+    <el-table-column
+      prop="shipmentNo"
+      label="出货单号"
+      align="center"
+      :filters="shipNoFilters"
       :filter-method="filterHandler"
     />
     <el-table-column
-      prop="wo"
-      label="工单"
+      prop="clientCode"
+      label="客户编号"
       align="center"
-      :filters="woFilters"
+      :filters="clientFilters"
       :filter-method="filterHandler"
     />
-    <el-table-column prop="uid" label="UID" align="center" />
-    <el-table-column prop="batch" label="批次号" align="center" />
-    <el-table-column prop="quantity" label="数量" align="center" />
-    <el-table-column prop="plant" label="工厂" align="center" />
+    <el-table-column
+      prop="po"
+      label="订单号"
+      align="center"
+      :filters="poFilters"
+      :filter-method="filterHandler"
+    />
     <el-table-column
       prop="state"
       label="状态"
@@ -33,50 +43,48 @@
       :filters="stateFilters"
       :filter-method="filterHandler"
     />
-    <el-table-column
-      prop="storageLoc"
-      label="仓位"
-      align="center"
-      :filter-method="filterHandler"
-    />
-    <el-table-column prop="recTime" label="收货时间" align="center" sortable />
+    <el-table-column prop="shipmentQty" label="出货数量" align="center" sortable />
+    <el-table-column prop="boxQty" label="装箱数" align="center" />
+    <el-table-column prop="palletQty" label="卡板数" align="center" />
   </el-table>
 </template>
 
 <script lang="ts" setup>
-import { computed } from "vue";
+import { computed, defineEmits } from "vue";
 import type { TableColumnCtx } from "element-plus";
+import { fa, ro } from "element-plus/es/locale";
 
-export interface Product {
+export interface Shipment {
   [key: string]: any;
-  item: number;
-  partNumber: string;
-  wo: string;
-  uid: string;
-  batch: string;
-  quantity: number;
-  plant: string;
+  shipmentDate: string;
+  shipmentNo: string;
+  clientCode: string;
+  po: string;
   state: string;
-  storageLoc: string;
-  recTime: string;
+  shipmentQty: number;
+  boxQty: number;
+  palletQty: number;
+  partNumberList: Array<never>;
 }
 
 // 父组件传递数组
 const props = defineProps<{
-  records: Product[];
+  records: Shipment[];
 }>();
-
+// 表格数据
 const tableData = computed(() => props.records);
+// 父组件弹窗显示/移除方法
+const popMethods = defineEmits(["showPop", "removePop"]);
 
 console.log("tableData:" + props.records);
 
-const tableRowClassName = ({ row }: { row: Product; rowIndex: number }) => {
-  if (row.state === "预留") {
-    return "send-row";
-  } else if (row.state === "在库") {
+const tableRowClassName = ({ row }: { row: Shipment; rowIndex: number }) => {
+  if (row.state === "待拣货") {
     return "in-stock-row";
+  } else if (row.state === "待装车") {
+    return "send-row";
   }
-  return "in-stock-row";
+  return "yellow-row";
 };
 
 const headerStyle = {
@@ -87,6 +95,17 @@ const headerStyle = {
 
 const headerCellStyle = {
   padding: 0,
+};
+
+// 鼠标移入行时显示 零部件号
+const hoverRow = ({ row }: { row: Shipment; rowIndex: number }) => {
+  console.log("66");
+  popMethods("showPop", true, row.partNumberList);
+};
+
+// 鼠标移出行时弹窗消失
+const leaveRow = ({ row }: { row: Shipment; rowIndex: number }) => {
+  popMethods("removePop", false);
 };
 
 // filters 去重
@@ -105,40 +124,51 @@ const distinct = (array: string[]) => {
   return newArr;
 };
 
-// partNumber 去重
-const pnFilters = computed(() => {
-  let pnArr: string[] = [];
-  // 所有 partNumber 抽出来装入集合
+// 出货单号去重
+const shipNoFilters = computed(() => {
+  let arr: string[] = [];
+  // 所有 出货单号 抽出来装入集合
   tableData.value.forEach((item) => {
-    pnArr.push(item.partNumber);
+    arr.push(item.shipmentNo);
   });
   // 去重
-  return distinct(pnArr);
+  return distinct(arr);
 });
 
-// 工单去重
-const woFilters = computed(() => {
-  let woArr: string[] = [];
-  // 所有工单抽出来装入集合
+// 客户编号去重
+const clientFilters = computed(() => {
+  let arr: string[] = [];
+  // 所有 客户编号 抽出来装入集合
   tableData.value.forEach((item) => {
-    woArr.push(item.wo);
+    arr.push(item.clientCode);
   });
   // 去重
-  return distinct(woArr);
+  return distinct(arr);
+});
+
+// 订单号去重
+const poFilters = computed(() => {
+  let arr: string[] = [];
+  // 所有 订单号 抽出来装入集合
+  tableData.value.forEach((item) => {
+    arr.push(item.po);
+  });
+  // 去重
+  return distinct(arr);
 });
 
 // 状态去重
 const stateFilters = computed(() => {
-  let stateArr: string[] = [];
-  // 所有工单抽出来装入集合
+  let arr: string[] = [];
+  // 所有 状态 抽出来装入集合
   tableData.value.forEach((item) => {
-    stateArr.push(item.state.toString());
+    arr.push(item.state);
   });
   // 去重
-  return distinct(stateArr);
+  return distinct(arr);
 });
 
-const filterHandler = (value: any, row: Product, column: TableColumnCtx<Product>) => {
+const filterHandler = (value: any, row: Shipment, column: TableColumnCtx<Shipment>) => {
   const property = column["property"];
   return row[property] === value;
 };
@@ -151,6 +181,10 @@ const filterHandler = (value: any, row: Product, column: TableColumnCtx<Product>
 
 .el-table .warning-row {
   --el-table-tr-bg-color: #dc143c;
+}
+
+.el-table .yellow-row {
+  --el-table-tr-bg-color: #fac858;
 }
 
 .el-table .in-stock-row {

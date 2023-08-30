@@ -43,7 +43,7 @@
         </div>
       </el-header>
       <el-main class="main">
-        <DataTable :data="records" :records="records" />
+        <StockDataTable :data="records" :records="records" />
         <el-pagination
           v-model:current-page="currentPage"
           layout="prev, pager, next"
@@ -67,7 +67,7 @@ import currentTime from "../currentTime";
 import reportTime from "../../commons/reportTime";
 import axios from "../../axios/axios";
 // 表格
-import DataTable from "../../components/StockDataTable.vue";
+import StockDataTable from "../../components/StockDataTable.vue";
 // 鸿通 logo
 import circleUrl from "../../assets/鸿通logo.png";
 
@@ -221,8 +221,8 @@ onMounted(() => {
 
 <style scoped>
 @font-face {
-  font-family: YouSheBiaoTiHei;
-  src: url(../../commons/fonts/YouSheBiaoTiHei-2.ttf);
+  font-family: YouSheBiaoTiHei2;
+  src: url("../../commons/fonts/YouSheBiaoTiHei-2.ttf");
 }
 
 .container {
@@ -246,7 +246,7 @@ onMounted(() => {
   display: flex;
   width: 100%;
   height: 100%;
-  font-family: YouSheBiaoTiHei;
+  font-family: YouSheBiaoTiHei2;
 }
 
 .dataScreen-header .header-lf {
