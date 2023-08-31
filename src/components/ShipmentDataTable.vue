@@ -19,10 +19,10 @@
         <el-popover
           title="零部件号"
           placement="top-start"
-          transition="transition"
-          :width="200"
+          transition="el-fade-in-linear"
+          :popper-style="popperStyle"
+          :width="180"
           :visible="scope.row.visible"
-          :content="scope.row.partNumberList"
         >
           <template #reference>
             <div>{{ scope.row.shipmentDate }}</div>
@@ -44,13 +44,13 @@
         <el-popover
           title="零部件号"
           placement="top-start"
-          transition="transition"
-          :width="200"
+          transition="el-fade-in-linear"
+          :popper-style="popperStyle"
+          :width="180"
           :visible="scope.row.visible"
-          :content="scope.row.partNumberList"
         >
           <template #reference>
-            <div>{{ scope.row.shipmentDate }}</div>
+            <div>{{ scope.row.shipmentNo }}</div>
           </template>
           <template #default>
             <div v-for="item in scope.row.partNumberList" :key="item">{{ item }}</div>
@@ -69,13 +69,13 @@
         <el-popover
           title="零部件号"
           placement="top-start"
-          transition="transition"
-          :width="200"
+          transition="el-fade-in-linear"
+          :popper-style="popperStyle"
+          :width="180"
           :visible="scope.row.visible"
-          :content="scope.row.partNumberList"
         >
           <template #reference>
-            <div>{{ scope.row.shipmentDate }}</div>
+            <div>{{ scope.row.clientCode }}</div>
           </template>
           <template #default>
             <div v-for="item in scope.row.partNumberList" :key="item">{{ item }}</div>
@@ -94,13 +94,13 @@
         <el-popover
           title="零部件号"
           placement="top-start"
-          transition="transition"
-          :width="200"
+          transition="el-fade-in-linear"
+          :popper-style="popperStyle"
+          :width="180"
           :visible="scope.row.visible"
-          :content="scope.row.partNumberList"
         >
           <template #reference>
-            <div>{{ scope.row.shipmentDate }}</div>
+            <div>{{ scope.row.po }}</div>
           </template>
           <template #default>
             <div v-for="item in scope.row.partNumberList" :key="item">{{ item }}</div>
@@ -119,13 +119,13 @@
         <el-popover
           title="零部件号"
           placement="top-start"
-          transition="transition"
-          :width="200"
+          transition="el-fade-in-linear"
+          :popper-style="popperStyle"
+          :width="180"
           :visible="scope.row.visible"
-          :content="scope.row.partNumberList"
         >
           <template #reference>
-            <div>{{ scope.row.shipmentDate }}</div>
+            <div>{{ scope.row.state }}</div>
           </template>
           <template #default>
             <div v-for="item in scope.row.partNumberList" :key="item">{{ item }}</div>
@@ -138,13 +138,13 @@
         <el-popover
           title="零部件号"
           placement="top-start"
-          transition="transition"
-          :width="200"
+          transition="el-fade-in-linear"
+          :popper-style="popperStyle"
+          :width="180"
           :visible="scope.row.visible"
-          :content="scope.row.partNumberList"
         >
           <template #reference>
-            <div>{{ scope.row.shipmentDate }}</div>
+            <div>{{ scope.row.shipmentQty }}</div>
           </template>
           <template #default>
             <div v-for="item in scope.row.partNumberList" :key="item">{{ item }}</div>
@@ -157,13 +157,13 @@
         <el-popover
           title="零部件号"
           placement="top-start"
-          transition="transition"
-          :width="200"
+          transition="el-fade-in-linear"
+          :popper-style="popperStyle"
+          :width="180"
           :visible="scope.row.visible"
-          :content="scope.row.partNumberList"
         >
           <template #reference>
-            <div>{{ scope.row.shipmentDate }}</div>
+            <div>{{ scope.row.boxQty }}</div>
           </template>
           <template #default>
             <div v-for="item in scope.row.partNumberList" :key="item">{{ item }}</div>
@@ -176,13 +176,13 @@
         <el-popover
           title="零部件号"
           placement="top-start"
-          transition="transition"
-          :width="200"
+          transition="el-fade-in-linear"
+          :popper-style="popperStyle"
+          :width="180"
           :visible="scope.row.visible"
-          :content="scope.row.partNumberList"
         >
           <template #reference>
-            <div>{{ scope.row.shipmentDate }}</div>
+            <div>{{ scope.row.palletQty }}</div>
           </template>
           <template #default>
             <div v-for="item in scope.row.partNumberList" :key="item">{{ item }}</div>
@@ -217,6 +217,18 @@ const props = defineProps<{
 }>();
 // 表格数据
 const tableData = computed(() => props.records);
+const headerStyle = {
+  height: "50px",
+  color: "#000000",
+  "font-size": "20px",
+};
+const headerCellStyle = {
+  padding: 0,
+};
+const popperStyle = {
+  "font-family": "Oppo-Sans",
+  "font-size": "15px",
+};
 
 console.log("tableData:" + props.records);
 
@@ -227,16 +239,6 @@ const tableRowClassName = ({ row }: { row: Shipment; rowIndex: number }) => {
     return "send-row";
   }
   return "yellow-row";
-};
-
-const headerStyle = {
-  height: "50px",
-  color: "#000000",
-  "font-size": "20px",
-};
-
-const headerCellStyle = {
-  padding: 0,
 };
 
 // 鼠标移入行时显示 零部件号
@@ -316,6 +318,11 @@ const filterHandler = (value: any, row: Shipment, column: TableColumnCtx<Shipmen
 </script>
 
 <style>
+@font-face {
+  font-family: Oppo-Sans;
+  src: url(../commons/fonts/OPlusSans3-Regular.ttf);
+}
+
 .el-table {
   --el-table-row-hover-bg-color: #3cb371;
 }
@@ -339,5 +346,10 @@ const filterHandler = (value: any, row: Shipment, column: TableColumnCtx<Shipmen
 .table {
   font-size: 15px;
   color: #ffffff;
+}
+
+.el-popover__title {
+  font-family: Oppo-Sans;
+  font-size: 20px;
 }
 </style>
