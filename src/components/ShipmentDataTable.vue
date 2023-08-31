@@ -22,11 +22,13 @@
           transition="transition"
           :width="200"
           :visible="scope.row.visible"
-          :rowId="scope.row.rowIndex"
           :content="scope.row.partNumberList"
         >
           <template #reference>
             <div>{{ scope.row.shipmentDate }}</div>
+          </template>
+          <template #default>
+            <div v-for="item in scope.row.partNumberList" :key="item">{{ item }}</div>
           </template>
         </el-popover>
       </template>
@@ -37,31 +39,157 @@
       align="center"
       :filters="shipNoFilters"
       :filter-method="filterHandler"
-    />
+    >
+      <template v-slot="scope">
+        <el-popover
+          title="零部件号"
+          placement="top-start"
+          transition="transition"
+          :width="200"
+          :visible="scope.row.visible"
+          :content="scope.row.partNumberList"
+        >
+          <template #reference>
+            <div>{{ scope.row.shipmentDate }}</div>
+          </template>
+          <template #default>
+            <div v-for="item in scope.row.partNumberList" :key="item">{{ item }}</div>
+          </template>
+        </el-popover>
+      </template>
+    </el-table-column>
     <el-table-column
       prop="clientCode"
       label="客户编号"
       align="center"
       :filters="clientFilters"
       :filter-method="filterHandler"
-    />
+    >
+      <template v-slot="scope">
+        <el-popover
+          title="零部件号"
+          placement="top-start"
+          transition="transition"
+          :width="200"
+          :visible="scope.row.visible"
+          :content="scope.row.partNumberList"
+        >
+          <template #reference>
+            <div>{{ scope.row.shipmentDate }}</div>
+          </template>
+          <template #default>
+            <div v-for="item in scope.row.partNumberList" :key="item">{{ item }}</div>
+          </template>
+        </el-popover>
+      </template>
+    </el-table-column>
     <el-table-column
       prop="po"
       label="订单号"
       align="center"
       :filters="poFilters"
       :filter-method="filterHandler"
-    />
+    >
+      <template v-slot="scope">
+        <el-popover
+          title="零部件号"
+          placement="top-start"
+          transition="transition"
+          :width="200"
+          :visible="scope.row.visible"
+          :content="scope.row.partNumberList"
+        >
+          <template #reference>
+            <div>{{ scope.row.shipmentDate }}</div>
+          </template>
+          <template #default>
+            <div v-for="item in scope.row.partNumberList" :key="item">{{ item }}</div>
+          </template>
+        </el-popover>
+      </template>
+    </el-table-column>
     <el-table-column
       prop="state"
       label="状态"
       align="center"
       :filters="stateFilters"
       :filter-method="filterHandler"
-    />
-    <el-table-column prop="shipmentQty" label="出货数量" align="center" sortable />
-    <el-table-column prop="boxQty" label="装箱数" align="center" />
-    <el-table-column prop="palletQty" label="卡板数" align="center" />
+    >
+      <template v-slot="scope">
+        <el-popover
+          title="零部件号"
+          placement="top-start"
+          transition="transition"
+          :width="200"
+          :visible="scope.row.visible"
+          :content="scope.row.partNumberList"
+        >
+          <template #reference>
+            <div>{{ scope.row.shipmentDate }}</div>
+          </template>
+          <template #default>
+            <div v-for="item in scope.row.partNumberList" :key="item">{{ item }}</div>
+          </template>
+        </el-popover>
+      </template>
+    </el-table-column>
+    <el-table-column prop="shipmentQty" label="出货数量" align="center" sortable>
+      <template v-slot="scope">
+        <el-popover
+          title="零部件号"
+          placement="top-start"
+          transition="transition"
+          :width="200"
+          :visible="scope.row.visible"
+          :content="scope.row.partNumberList"
+        >
+          <template #reference>
+            <div>{{ scope.row.shipmentDate }}</div>
+          </template>
+          <template #default>
+            <div v-for="item in scope.row.partNumberList" :key="item">{{ item }}</div>
+          </template>
+        </el-popover>
+      </template>
+    </el-table-column>
+    <el-table-column prop="boxQty" label="装箱数" align="center">
+      <template v-slot="scope">
+        <el-popover
+          title="零部件号"
+          placement="top-start"
+          transition="transition"
+          :width="200"
+          :visible="scope.row.visible"
+          :content="scope.row.partNumberList"
+        >
+          <template #reference>
+            <div>{{ scope.row.shipmentDate }}</div>
+          </template>
+          <template #default>
+            <div v-for="item in scope.row.partNumberList" :key="item">{{ item }}</div>
+          </template>
+        </el-popover>
+      </template>
+    </el-table-column>
+    <el-table-column prop="palletQty" label="卡板数" align="center">
+      <template v-slot="scope">
+        <el-popover
+          title="零部件号"
+          placement="top-start"
+          transition="transition"
+          :width="200"
+          :visible="scope.row.visible"
+          :content="scope.row.partNumberList"
+        >
+          <template #reference>
+            <div>{{ scope.row.shipmentDate }}</div>
+          </template>
+          <template #default>
+            <div v-for="item in scope.row.partNumberList" :key="item">{{ item }}</div>
+          </template>
+        </el-popover>
+      </template>
+    </el-table-column>
   </el-table>
 </template>
 
@@ -113,8 +241,6 @@ const headerCellStyle = {
 
 // 鼠标移入行时显示 零部件号
 const hoverRow = ({ row }: { row: Shipment; rowIndex: number }) => {
-  console.log("66");
-  console.log(row);
   row.visible = true;
 };
 
