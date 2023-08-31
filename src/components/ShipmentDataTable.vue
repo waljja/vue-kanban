@@ -14,7 +14,23 @@
       width="180"
       align="center"
       sortable
-    />
+    >
+      <template v-slot="scope">
+        <el-popover
+          title="零部件号"
+          placement="top-start"
+          transition="transition"
+          :width="200"
+          :visible="scope.row.visible"
+          :rowId="scope.row.rowIndex"
+          :content="scope.row.partNumberList"
+        >
+          <template #reference>
+            <div>{{ scope.row.shipmentDate }}</div>
+          </template>
+        </el-popover>
+      </template>
+    </el-table-column>
     <el-table-column
       prop="shipmentNo"
       label="出货单号"
@@ -50,7 +66,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, defineEmits } from "vue";
+import { computed } from "vue";
 import type { TableColumnCtx } from "element-plus";
 
 export interface Shipment {
@@ -64,6 +80,7 @@ export interface Shipment {
   boxQty: number;
   palletQty: number;
   partNumberList: [];
+  visible: boolean;
 }
 
 // 父组件传递数组
@@ -72,8 +89,6 @@ const props = defineProps<{
 }>();
 // 表格数据
 const tableData = computed(() => props.records);
-// 父组件弹窗显示/移除方法
-const popMethods = defineEmits(["showPop", "removePop"]);
 
 console.log("tableData:" + props.records);
 
@@ -100,12 +115,12 @@ const headerCellStyle = {
 const hoverRow = ({ row }: { row: Shipment; rowIndex: number }) => {
   console.log("66");
   console.log(row);
-  popMethods("showPop", true);
+  row.visible = true;
 };
 
 // 鼠标移出行时弹窗消失
 const leaveRow = ({ row }: { row: Shipment; rowIndex: number }) => {
-  popMethods("removePop", false);
+  row.visible = false;
 };
 
 // filters 去重

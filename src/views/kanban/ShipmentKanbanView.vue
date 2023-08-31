@@ -43,17 +43,7 @@
         </div>
       </el-header>
       <el-main class="main">
-        <el-popover
-          title="零部件号"
-          placement="top-start"
-          transition="transition"
-          :width="200"
-          :visible="visible"
-          content="this is content, this is content, this is content"
-        >
-          <template #reference><div></div></template>
-        </el-popover>
-        <ShipmentDataTable :data="records" :records="records" @showPop="showPop" @removePop="removePop" />
+        <ShipmentDataTable :data="records" :records="records" />
         <el-pagination
           v-model:current-page="currentPage"
           layout="prev, pager, next"
@@ -91,9 +81,6 @@ const currentPage = ref();
 var records = ref([]);
 // 返回总记录数
 var total = ref(20);
-// 浮窗提示是否显示
-const visible = ref(true);
-const content = ref([]);
 const shortcuts = [
   {
     text: "上周",
@@ -123,19 +110,6 @@ const shortcuts = [
     },
   },
 ];
-
-// 展示弹窗
-const showPop = (isShow: boolean) => {
-  visible.value = isShow;
-  // content.value = partNumber;
-  console.log("show");
-};
-
-// 移除弹窗
-const removePop = (isShow: boolean) => {
-  visible.value = isShow;
-  console.log("remove");
-}
 
 // 获取当前时间
 const getCurrentTime = () => {
