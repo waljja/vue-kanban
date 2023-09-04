@@ -6,7 +6,7 @@
     :header-cell-style="headerCellStyle"
     :row-class-name="tableRowClassName"
   >
-    <el-table-column prop="item" label="Item" width="180" align="center" sortable />
+    <el-table-column prop="item" label="序号" width="180" align="center" sortable />
     <el-table-column
       prop="partNumber"
       label="PartNumber"

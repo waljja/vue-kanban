@@ -62,9 +62,7 @@ import { ref, onMounted } from "vue";
 // element-plus 国际化
 import zhCn from "element-plus/dist/locale/zh-cn.mjs";
 // 公用获取时间函数
-import currentTime from "../currentTime";
-// 报表时间获取
-import reportTime from "../../commons/reportTime";
+import currentTime from "../../commons/ts/currentTime";
 import axios from "../../axios/axios";
 // 表格
 import ShipmentDataTable from "../../components/ShipmentDataTable.vue";
@@ -167,7 +165,7 @@ const exportExcel = async () => {
       // 触发下载链接
       let link = document.createElement("a");
       link.href = URL.createObjectURL(blob);
-      link.download = "成品入库报表" + reportTime(new Date()) + ".xlsx";
+      link.download = "成品入库报表.xlsx";
       link.click();
       // 移除元素
       document.body.removeChild(link);
@@ -379,3 +377,4 @@ onMounted(() => {
   color: #ffffff;
 }
 </style>
+../../commons/ts/currentTime
