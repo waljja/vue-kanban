@@ -205,7 +205,8 @@ onMounted(() => {
   // 1分钟刷新一次看板数据
   setInterval(async () => {
     console.log("refresh data: " + new Date().toLocaleTimeString());
-    initTable();
+    // 保留当前页码
+    handlePageChange();
   }, 60000);
 });
 </script>

@@ -59,6 +59,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
+import usePageStore from '@/store/page';
 // element-plus 国际化
 import zhCn from "element-plus/dist/locale/zh-cn.mjs";
 // 公用获取时间函数
@@ -186,7 +187,6 @@ const exportExcel = async () => {
 
 // 切换页面
 const handlePageChange = () => {
-  console.log("currentPage: " + currentPage.value);
   axios
     .get("/kanban/product-storage/get-data", {
       params: {
@@ -212,7 +212,8 @@ onMounted(() => {
   // 1分钟刷新一次看板数据
   setInterval(async () => {
     console.log("refresh data: " + new Date().toLocaleTimeString());
-    initTable();
+    // 保留当前页码
+    handlePageChange();
   }, 60000);
 });
 </script>
