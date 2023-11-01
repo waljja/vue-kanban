@@ -59,7 +59,6 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
-import usePageStore from '@/store/page';
 // element-plus 国际化
 import zhCn from "element-plus/dist/locale/zh-cn.mjs";
 // 公用获取时间函数
@@ -385,4 +384,3 @@ onMounted(() => {
   color: #ffffff;
 }
 </style>
-../../commons/ts/currentTime

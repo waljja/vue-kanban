@@ -109,12 +109,16 @@ const shortcuts = [
   },
 ];
 
-// 获取当前时间
+/**
+ * 获取当前时间
+ */
 const getCurrentTime = () => {
   dateTime.value = currentTime(new Date());
 };
 
-// 初始化表格数据
+/**
+ * 初始化表格数据
+ */
 const initTable = () => {
   axios
     .get("/kanban/product-shipment/get-data", {
@@ -133,7 +137,9 @@ const initTable = () => {
 };
 initTable();
 
-// 根据日期筛选工单信息
+/**
+ * 根据日期筛选工单信息
+ */
 const filter = () => {
   axios
     .get("/kanban/product-shipment/get-data", {
@@ -153,7 +159,9 @@ const filter = () => {
     });
 };
 
-// 导出 Excel 报表
+/**
+ * 导出 Excel 报表
+ */
 const exportExcel = async () => {
   return axios
     .get("/product/report/download", { responseType: "blob" })
@@ -179,11 +187,16 @@ const exportExcel = async () => {
 
 // 切换页面
 const handlePageChange = () => {
-  console.log("currentPage: " + currentPage.value);
+  var page;
+  if (currentPage.value !== undefined) {
+    page = currentPage.value;
+  } else {
+    page = "1";
+  }
   axios
     .get("/kanban/product-shipment/get-data", {
       params: {
-        current: currentPage.value,
+        current: page,
         startDate: dateArr.value[0],
         endDate: dateArr.value[1],
       },
@@ -378,4 +391,3 @@ onMounted(() => {
   color: #ffffff;
 }
 </style>
-../../commons/ts/currentTime

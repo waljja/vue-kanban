@@ -15,23 +15,6 @@
       align="center"
       sortable
     >
-      <template v-slot="scope">
-        <el-popover
-          title="零部件号"
-          placement="top-start"
-          transition="el-fade-in-linear"
-          :popper-style="popperStyle"
-          :width="180"
-          :visible="scope.row.visible"
-        >
-          <template #reference>
-            <div>{{ scope.row.shipmentDate }}</div>
-          </template>
-          <template #default>
-            <div v-for="item in scope.row.partNumberList" :key="item">{{ item }}</div>
-          </template>
-        </el-popover>
-      </template>
     </el-table-column>
     <el-table-column
       prop="shipmentNo"
@@ -65,23 +48,6 @@
       :filters="clientFilters"
       :filter-method="filterHandler"
     >
-      <template v-slot="scope">
-        <el-popover
-          title="零部件号"
-          placement="top-start"
-          transition="el-fade-in-linear"
-          :popper-style="popperStyle"
-          :width="180"
-          :visible="scope.row.visible"
-        >
-          <template #reference>
-            <div>{{ scope.row.clientCode }}</div>
-          </template>
-          <template #default>
-            <div v-for="item in scope.row.partNumberList" :key="item">{{ item }}</div>
-          </template>
-        </el-popover>
-      </template>
     </el-table-column>
     <el-table-column
       prop="po"
@@ -90,23 +56,6 @@
       :filters="poFilters"
       :filter-method="filterHandler"
     >
-      <template v-slot="scope">
-        <el-popover
-          title="零部件号"
-          placement="top-start"
-          transition="el-fade-in-linear"
-          :popper-style="popperStyle"
-          :width="180"
-          :visible="scope.row.visible"
-        >
-          <template #reference>
-            <div>{{ scope.row.po }}</div>
-          </template>
-          <template #default>
-            <div v-for="item in scope.row.partNumberList" :key="item">{{ item }}</div>
-          </template>
-        </el-popover>
-      </template>
     </el-table-column>
     <el-table-column
       prop="state"
@@ -115,81 +64,15 @@
       :filters="stateFilters"
       :filter-method="filterHandler"
     >
-      <template v-slot="scope">
-        <el-popover
-          title="零部件号"
-          placement="top-start"
-          transition="el-fade-in-linear"
-          :popper-style="popperStyle"
-          :width="180"
-          :visible="scope.row.visible"
-        >
-          <template #reference>
-            <div>{{ scope.row.state }}</div>
-          </template>
-          <template #default>
-            <div v-for="item in scope.row.partNumberList" :key="item">{{ item }}</div>
-          </template>
-        </el-popover>
-      </template>
     </el-table-column>
-    <el-table-column prop="shipmentQty" label="出货数量" align="center" sortable>
-      <template v-slot="scope">
-        <el-popover
-          title="零部件号"
-          placement="top-start"
-          transition="el-fade-in-linear"
-          :popper-style="popperStyle"
-          :width="180"
-          :visible="scope.row.visible"
-        >
-          <template #reference>
-            <div>{{ scope.row.shipmentQty }}</div>
-          </template>
-          <template #default>
-            <div v-for="item in scope.row.partNumberList" :key="item">{{ item }}</div>
-          </template>
-        </el-popover>
-      </template>
-    </el-table-column>
-    <el-table-column prop="boxQty" label="装箱数" align="center">
-      <template v-slot="scope">
-        <el-popover
-          title="零部件号"
-          placement="top-start"
-          transition="el-fade-in-linear"
-          :popper-style="popperStyle"
-          :width="180"
-          :visible="scope.row.visible"
-        >
-          <template #reference>
-            <div>{{ scope.row.boxQty }}</div>
-          </template>
-          <template #default>
-            <div v-for="item in scope.row.partNumberList" :key="item">{{ item }}</div>
-          </template>
-        </el-popover>
-      </template>
-    </el-table-column>
-    <el-table-column prop="palletQty" label="卡板数" align="center">
-      <template v-slot="scope">
-        <el-popover
-          title="零部件号"
-          placement="top-start"
-          transition="el-fade-in-linear"
-          :popper-style="popperStyle"
-          :width="180"
-          :visible="scope.row.visible"
-        >
-          <template #reference>
-            <div>{{ scope.row.palletQty }}</div>
-          </template>
-          <template #default>
-            <div v-for="item in scope.row.partNumberList" :key="item">{{ item }}</div>
-          </template>
-        </el-popover>
-      </template>
-    </el-table-column>
+    <el-table-column
+      prop="shipmentQty"
+      label="出货数量"
+      align="center"
+      sortable
+    ></el-table-column>
+    <el-table-column prop="boxQty" label="装箱数" align="center"></el-table-column>
+    <el-table-column prop="palletQty" label="卡板数" align="center"></el-table-column>
   </el-table>
 </template>
 
@@ -238,7 +121,7 @@ const tableRowClassName = ({ row }: { row: Shipment; rowIndex: number }) => {
   } else if (row.state === "待装车") {
     return "send-row";
   }
-  return "yellow-row";
+  return "in-preparation-row";
 };
 
 // 鼠标移入行时显示 零部件号
@@ -327,12 +210,8 @@ const filterHandler = (value: any, row: Shipment, column: TableColumnCtx<Shipmen
   --el-table-row-hover-bg-color: #3cb371;
 }
 
-.el-table .warning-row {
-  --el-table-tr-bg-color: #dc143c;
-}
-
-.el-table .yellow-row {
-  --el-table-tr-bg-color: #fac858;
+.el-table .in-preparation-row {
+  --el-table-tr-bg-color: #392e4a;
 }
 
 .el-table .in-stock-row {
@@ -340,7 +219,7 @@ const filterHandler = (value: any, row: Shipment, column: TableColumnCtx<Shipmen
 }
 
 .el-table .send-row {
-  --el-table-tr-bg-color: #3cb371;
+  --el-table-tr-bg-color: #383451;
 }
 
 .table {
