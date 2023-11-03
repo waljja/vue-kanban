@@ -132,7 +132,7 @@ const initTable = () => {
       console.log(records.value);
     })
     .catch((error) => {
-      console.log(error);
+      console.log("初始化: " + error);
     });
 };
 initTable();
@@ -155,7 +155,7 @@ const filter = () => {
       total.value = res.data.data.total;
     })
     .catch((error) => {
-      console.log("获取数据接口错误：" + error);
+      console.log("获取数据接口错误（筛选）：" + error);
     });
 };
 
@@ -206,7 +206,7 @@ const handlePageChange = () => {
       records.value = res.data.data.records;
     })
     .catch((error) => {
-      console.log("获取数据接口错误：" + error);
+      console.log("获取数据接口错误（切换）：" + error);
     });
 };
 

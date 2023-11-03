@@ -50,14 +50,6 @@
     >
     </el-table-column>
     <el-table-column
-      prop="po"
-      label="订单号"
-      align="center"
-      :filters="poFilters"
-      :filter-method="filterHandler"
-    >
-    </el-table-column>
-    <el-table-column
       prop="state"
       label="状态"
       align="center"
@@ -85,7 +77,6 @@ export interface Shipment {
   shipmentDate: string;
   shipmentNo: string;
   clientCode: string;
-  po: string;
   state: string;
   shipmentQty: number;
   boxQty: number;
@@ -116,12 +107,10 @@ const popperStyle = {
 console.log("tableData:" + props.records);
 
 const tableRowClassName = ({ row }: { row: Shipment; rowIndex: number }) => {
-  if (row.state === "待拣货") {
-    return "in-stock-row";
-  } else if (row.state === "待装车") {
+  if (row.state === "待装车") {
     return "send-row";
   }
-  return "in-preparation-row";
+  return "in-stock-row";
 };
 
 // 鼠标移入行时显示 零部件号
@@ -172,17 +161,6 @@ const clientFilters = computed(() => {
   return distinct(arr);
 });
 
-// 订单号去重
-const poFilters = computed(() => {
-  let arr: string[] = [];
-  // 所有 订单号 抽出来装入集合
-  tableData.value.forEach((item) => {
-    arr.push(item.po);
-  });
-  // 去重
-  return distinct(arr);
-});
-
 // 状态去重
 const stateFilters = computed(() => {
   let arr: string[] = [];
@@ -219,7 +197,7 @@ const filterHandler = (value: any, row: Shipment, column: TableColumnCtx<Shipmen
 }
 
 .el-table .send-row {
-  --el-table-tr-bg-color: #383451;
+  --el-table-tr-bg-color: #BE2534;
 }
 
 .table {

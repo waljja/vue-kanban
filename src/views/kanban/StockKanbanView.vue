@@ -128,7 +128,7 @@ const initTable = () => {
       console.log(records.value);
     })
     .catch((error) => {
-      console.log(error);
+      console.log("初始化（Stock）" + error);
     });
 };
 initTable();
@@ -149,7 +149,7 @@ const filter = () => {
       total.value = res.data.data.total;
     })
     .catch((error) => {
-      console.log("获取数据接口错误：" + error);
+      console.log("获取数据接口错误（Stock筛选）: " + error);
     });
 };
 
@@ -186,10 +186,16 @@ const exportExcel = async () => {
 
 // 切换页面
 const handlePageChange = () => {
+  var page;
+  if (currentPage.value !== undefined) {
+    page = currentPage.value;
+  } else {
+    page = "1";
+  }
   axios
     .get("/kanban/product-storage/get-data", {
       params: {
-        current: currentPage.value,
+        current: page,
         startDate: dateArr.value[0],
         endDate: dateArr.value[1],
       },
@@ -199,7 +205,7 @@ const handlePageChange = () => {
       records.value = res.data.data.records;
     })
     .catch((error) => {
-      console.log("获取数据接口错误：" + error);
+      console.log("获取数据接口错误（Stock切换）: " + error);
     });
 };
 
