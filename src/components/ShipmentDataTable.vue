@@ -17,6 +17,14 @@
     >
     </el-table-column>
     <el-table-column
+      prop="shipmentCar"
+      label="出货车型"
+      width="180"
+      align="center"
+      sortable
+    >
+    </el-table-column>
+    <el-table-column
       prop="shipmentNo"
       label="出货单号"
       align="center"
@@ -49,6 +57,14 @@
       :filter-method="filterHandler"
     >
     </el-table-column>
+    <el-table-column prop="shipmentQty" label="出货数量" align="center" sortable>
+    </el-table-column>
+    <el-table-column prop="boxQty" label="装箱数" align="center"></el-table-column>
+    <el-table-column prop="palletQty" label="卡板数" align="center"></el-table-column>
+    <el-table-column prop="toNo" label="TO单" width="180" align="center" sortable>
+    </el-table-column>
+    <el-table-column prop="toQty" label="TO数量" width="180" align="center" sortable>
+    </el-table-column>
     <el-table-column
       prop="state"
       label="状态"
@@ -56,15 +72,12 @@
       :filters="stateFilters"
       :filter-method="filterHandler"
     >
+      <template #default="scope">
+        <el-tag size="default" :color="scope.row.state === '欠货' ? '#be2534' : '#13192f'" :type="scope.row.state === '欠货' ? 'danger' : ''" effect="dark">
+          {{ scope.row.state }}
+        </el-tag>
+      </template>
     </el-table-column>
-    <el-table-column
-      prop="shipmentQty"
-      label="出货数量"
-      align="center"
-      sortable
-    ></el-table-column>
-    <el-table-column prop="boxQty" label="装箱数" align="center"></el-table-column>
-    <el-table-column prop="palletQty" label="卡板数" align="center"></el-table-column>
   </el-table>
 </template>
 
@@ -75,6 +88,7 @@ import type { TableColumnCtx } from "element-plus";
 export interface Shipment {
   [key: string]: any;
   shipmentDate: string;
+  shipmentCar: string;
   shipmentNo: string;
   clientCode: string;
   state: string;
@@ -82,6 +96,8 @@ export interface Shipment {
   boxQty: number;
   palletQty: number;
   partNumberList: [];
+  toNo: string;
+  toQty: number;
   visible: boolean;
 }
 
@@ -106,10 +122,8 @@ const popperStyle = {
 
 console.log("tableData:" + props.records);
 
+// 缺货状态为红色
 const tableRowClassName = ({ row }: { row: Shipment; rowIndex: number }) => {
-  if (row.state === "待装车") {
-    return "send-row";
-  }
   return "in-stock-row";
 };
 
@@ -197,7 +211,7 @@ const filterHandler = (value: any, row: Shipment, column: TableColumnCtx<Shipmen
 }
 
 .el-table .send-row {
-  --el-table-tr-bg-color: #BE2534;
+  --el-table-tr-bg-color: #be2534;
 }
 
 .table {
