@@ -8,6 +8,22 @@
             <div class="header-logo">
               <span class="header-screening">鸿通</span>
             </div>
+            <div class="date-pick">
+              <el-switch
+                v-model="mode"
+                active-color="#13192f"
+                @change="changeMode"
+              >
+                <template #active-action>
+                  <span class="custom-inactive-action icon iconfont icon-yejianmoshi" />
+                </template>
+                <template #inactive-action>
+                  <span
+                    class="custom-inactive-action icon iconfont icon-baitianmoshimingliangmoshi"
+                  />
+                </template>
+              </el-switch>
+            </div>
           </div>
           <div class="header-ct">
             <div class="header-ct-title">
@@ -35,9 +51,9 @@
                 :shortcuts="shortcuts"
               />
               <el-button class="filter" type="success" @click="filter">筛选</el-button>
-              <el-button class="export" type="primary" @click="exportExcel"
-                >导出</el-button
-              >
+              <el-button class="export" type="primary" @click="exportExcel">
+                导出
+              </el-button>
             </div>
           </div>
         </div>
@@ -69,6 +85,8 @@ import ShipmentDataTable from "../../components/ShipmentDataTable.vue";
 // 鸿通 logo
 import circleUrl from "../../assets/鸿通logo.png";
 
+// 白天/夜间模式
+const mode = ref(false);
 // 日期选择器 开始、结束 日期
 const dateArr = ref("");
 // 实时获取时间
@@ -114,6 +132,19 @@ const shortcuts = [
  */
 const getCurrentTime = () => {
   dateTime.value = currentTime(new Date());
+};
+
+/**
+ * 切换白天/夜间模式
+ */
+const changeMode = () => {
+  if (mode.value === true) {
+    handlePageChange();
+    document.body.setAttribute("theme", "dark");
+  } else {
+    handlePageChange();
+    document.body.setAttribute("theme", "light");
+  }
 };
 
 /**
@@ -224,7 +255,9 @@ onMounted(() => {
 });
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+@import "../../commons/css/themes/dark.css";
+@import "../../assets/iconfont/iconfont.css";
 @font-face {
   font-family: YouSheBiaoTiHei2;
   src: url("../../commons/fonts/YouSheBiaoTiHei-2.ttf");
@@ -236,15 +269,16 @@ onMounted(() => {
   width: 100%;
   height: 100%;
   position: fixed;
-  background-image: url("../../assets/background.png");
   text-align: center;
+  background-color: var(--bg-color-container);
+  background-image: var(--bg-img-container);
 }
 
 .header {
   margin-top: 20px;
   height: 15%;
   text-align: center;
-  color: #ffffff;
+  color: var(--color-header);
 }
 
 .dataScreen-header {
@@ -265,7 +299,11 @@ onMounted(() => {
   top: 15%;
   margin: 0 auto;
   font-size: 1.5rem;
-  color: #05e8fe;
+  color: var(--color-header);
+}
+
+.el-switch {
+  
 }
 
 .dataScreen-header .header-right {
@@ -291,14 +329,14 @@ onMounted(() => {
 .right-font {
   top: 15%;
   font-size: 1.5rem;
-  color: #05e8fe;
+  color: var(--color-header);
 }
 
 .dataScreen-header .header-rg .header-time {
   top: 15%;
   margin: 0 auto;
   font-size: 1.5rem;
-  color: #05e8fe;
+  color: var(--color-header);
 }
 
 .date-pick {
@@ -337,11 +375,11 @@ onMounted(() => {
   height: 100%;
   font-size: 32px;
   line-height: 78px;
-  color: #05e8fe;
   text-align: center;
   letter-spacing: 4px;
   background: url("../../assets/dataScreen-header-center-bg.png") no-repeat;
   background-size: 100% 100%;
+  color: var(--color-header);
 }
 
 .header-logo {
@@ -370,24 +408,24 @@ onMounted(() => {
 }
 
 .el-pagination {
-  top: 5%;
+  top: 3%;
   justify-content: center;
 }
 
 :deep(.el-pagination .el-pager li:not(.disabled)) {
-  background-color: #13192f;
+  background-color: var(--bg-color-pager-li-not-disabled);
 }
 
 :deep(.el-pager li) {
-  color: #ffffff;
+  color: var(--color-pager-li);
 }
 
 :deep(.el-pager li.is-active) {
-  color: #05e8fe;
+  color: var(--color-pager-li-is-active);
 }
 
 :deep(.el-pagination button) {
-  background-color: #13192f;
-  color: #ffffff;
+  background-color: var(--bg-color-pagination-button);
+  color: var(--color-pagination-button);
 }
 </style>

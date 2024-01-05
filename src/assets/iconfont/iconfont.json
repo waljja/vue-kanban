@@ -1,0 +1,23 @@
+{
+  "id": "4398869",
+  "name": "product-kanban",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "398280",
+      "name": "白天模式，明亮模式",
+      "font_class": "baitianmoshimingliangmoshi",
+      "unicode": "e632",
+      "unicode_decimal": 58930
+    },
+    {
+      "icon_id": "398281",
+      "name": "夜间模式",
+      "font_class": "yejianmoshi",
+      "unicode": "e633",
+      "unicode_decimal": 58931
+    }
+  ]
+}

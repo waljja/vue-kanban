@@ -2,7 +2,7 @@
   <el-table
     class="table"
     size="small"
-    :header-row-style="headerStyle"
+    header-row-class-name="headerStyle"
     :header-cell-style="headerCellStyle"
     :row-class-name="tableRowClassName"
     @cell-mouse-enter="hoverRow"
@@ -73,7 +73,12 @@
       :filter-method="filterHandler"
     >
       <template #default="scope">
-        <el-tag size="default" :color="scope.row.state === '欠货' ? '#be2534' : '#13192f'" :type="scope.row.state === '欠货' ? 'danger' : ''" effect="dark">
+        <el-tag
+          size="default"
+          :color="scope.row.state === '欠货' ? '#be2534' : '#13192f'"
+          :type="scope.row.state === '欠货' ? 'danger' : ''"
+          effect="dark"
+        >
           {{ scope.row.state }}
         </el-tag>
       </template>
@@ -107,12 +112,9 @@ const props = defineProps<{
 }>();
 // 表格数据
 const tableData = computed(() => props.records);
-const headerStyle = {
-  height: "50px",
-  color: "#000000",
-  "font-size": "20px",
-};
 const headerCellStyle = {
+  // "background-color": "#13192f",
+  // "background-color": "#f4f5f5",
   padding: 0,
 };
 const popperStyle = {
@@ -122,9 +124,10 @@ const popperStyle = {
 
 console.log("tableData:" + props.records);
 
-// 缺货状态为红色
 const tableRowClassName = ({ row }: { row: Shipment; rowIndex: number }) => {
-  return "in-stock-row";
+  if (document.body.getAttribute("theme") === "dark") {
+    return "in-stock-row";
+  }
 };
 
 // 鼠标移入行时显示 零部件号
@@ -202,12 +205,18 @@ const filterHandler = (value: any, row: Shipment, column: TableColumnCtx<Shipmen
   --el-table-row-hover-bg-color: #3cb371;
 }
 
+.headerStyle {
+  height: 50px;
+  color: var(--color-table-header);
+  font-size: 20px;
+}
+
 .el-table .in-preparation-row {
   --el-table-tr-bg-color: #392e4a;
 }
 
 .el-table .in-stock-row {
-  --el-table-tr-bg-color: #13192f;
+  --el-table-tr-bg-color: var(--bg-color-in-stock-row);
 }
 
 .el-table .send-row {
@@ -216,7 +225,7 @@ const filterHandler = (value: any, row: Shipment, column: TableColumnCtx<Shipmen
 
 .table {
   font-size: 15px;
-  color: #ffffff;
+  color: var(--color-table);
 }
 
 .el-popover__title {

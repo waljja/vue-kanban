@@ -81,11 +81,12 @@ const tableRowClassName = ({ row }: { row: Product; rowIndex: number }) => {
 
 const headerStyle = {
   height: "50px",
-  color: "#000000",
+  color: "#ffffff",
   "font-size": "20px",
 };
 
 const headerCellStyle = {
+  "background-color": "#13192f",
   padding: 0,
 };
 
@@ -154,7 +155,8 @@ const filterHandler = (value: any, row: Product, column: TableColumnCtx<Product>
 }
 
 .el-table .in-stock-row {
-  --el-table-tr-bg-color: #13192f;
+  --el-table-tr-bg-color: #ffffff;
+  /* #13192f */
 }
 
 .el-table .send-row {
@@ -163,6 +165,6 @@ const filterHandler = (value: any, row: Product, column: TableColumnCtx<Product>
 
 .table {
   font-size: 15px;
-  color: #ffffff;
+  color: #000000;
 }
 </style>
