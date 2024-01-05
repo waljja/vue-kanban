@@ -3,27 +3,38 @@
     class="table"
     size="small"
     header-row-class-name="headerStyle"
-    :header-cell-style="headerCellStyle"
-    :row-class-name="tableRowClassName"
+    cell-class-name="cell-class"
     @cell-mouse-enter="hoverRow"
     @cell-mouse-leave="leaveRow"
   >
     <el-table-column
       prop="shipmentDate"
       label="出货日期"
-      width="180"
+      width="120"
       align="center"
       sortable
-    >
-    </el-table-column>
+    />
+    <el-table-column
+      prop="loadingTime"
+      label="装车时间"
+      width="160"
+      align="center"
+      sortable
+    />
     <el-table-column
       prop="shipmentCar"
       label="出货车型"
       width="180"
       align="center"
       sortable
-    >
-    </el-table-column>
+    />
+    <el-table-column
+      prop="licenseNumber"
+      label="车牌号"
+      width="180"
+      align="center"
+      sortable
+    />
     <el-table-column
       prop="shipmentNo"
       label="出货单号"
@@ -55,16 +66,12 @@
       align="center"
       :filters="clientFilters"
       :filter-method="filterHandler"
-    >
-    </el-table-column>
-    <el-table-column prop="shipmentQty" label="出货数量" align="center" sortable>
-    </el-table-column>
-    <el-table-column prop="boxQty" label="装箱数" align="center"></el-table-column>
-    <el-table-column prop="palletQty" label="卡板数" align="center"></el-table-column>
-    <el-table-column prop="toNo" label="TO单" width="180" align="center" sortable>
-    </el-table-column>
-    <el-table-column prop="toQty" label="TO数量" width="180" align="center" sortable>
-    </el-table-column>
+    />
+    <el-table-column prop="shipmentQty" label="出货数量" align="center" sortable />
+    <el-table-column prop="boxQty" label="装箱数" align="center" />
+    <el-table-column prop="palletQty" label="卡板数" align="center" />
+    <el-table-column prop="toNo" label="TO单" width="180" align="center" sortable />
+    <el-table-column prop="toQty" label="TO数量" width="180" align="center" sortable />
     <el-table-column
       prop="state"
       label="状态"
@@ -93,7 +100,9 @@ import type { TableColumnCtx } from "element-plus";
 export interface Shipment {
   [key: string]: any;
   shipmentDate: string;
+  loadingTime: string;
   shipmentCar: string;
+  licenseNumber: string;
   shipmentNo: string;
   clientCode: string;
   state: string;
@@ -112,23 +121,12 @@ const props = defineProps<{
 }>();
 // 表格数据
 const tableData = computed(() => props.records);
-const headerCellStyle = {
-  // "background-color": "#13192f",
-  // "background-color": "#f4f5f5",
-  padding: 0,
-};
 const popperStyle = {
   "font-family": "Oppo-Sans",
   "font-size": "15px",
 };
 
 console.log("tableData:" + props.records);
-
-const tableRowClassName = ({ row }: { row: Shipment; rowIndex: number }) => {
-  if (document.body.getAttribute("theme") === "dark") {
-    return "in-stock-row";
-  }
-};
 
 // 鼠标移入行时显示 零部件号
 const hoverRow = ({ row }: { row: Shipment; rowIndex: number }) => {
@@ -209,6 +207,14 @@ const filterHandler = (value: any, row: Shipment, column: TableColumnCtx<Shipmen
   height: 50px;
   color: var(--color-table-header);
   font-size: 20px;
+}
+
+.cell-class {
+  background-color: var(--bg-color-cell);
+}
+
+.el-table th.el-table__cell {
+  background-color: var(--bg-color-table-header);
 }
 
 .el-table .in-preparation-row {

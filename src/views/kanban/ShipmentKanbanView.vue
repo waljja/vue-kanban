@@ -9,17 +9,15 @@
               <span class="header-screening">鸿通</span>
             </div>
             <div class="date-pick">
-              <el-switch
-                v-model="mode"
-                active-color="#13192f"
-                @change="changeMode"
-              >
+              <el-switch size="large" v-model="mode" @change="changeMode">
                 <template #active-action>
-                  <span class="custom-inactive-action icon iconfont icon-yejianmoshi" />
+                  <span
+                    class="custom-inactive-action icon iconfont icon-yejianmoshi bg-color-icon-dark"
+                  />
                 </template>
                 <template #inactive-action>
                   <span
-                    class="custom-inactive-action icon iconfont icon-baitianmoshimingliangmoshi"
+                    class="custom-inactive-action icon iconfont icon-baitianmoshimingliangmoshi bg-color-icon-light"
                   />
                 </template>
               </el-switch>
@@ -139,10 +137,8 @@ const getCurrentTime = () => {
  */
 const changeMode = () => {
   if (mode.value === true) {
-    handlePageChange();
     document.body.setAttribute("theme", "dark");
   } else {
-    handlePageChange();
     document.body.setAttribute("theme", "light");
   }
 };
@@ -256,7 +252,6 @@ onMounted(() => {
 </script>
 
 <style scoped lang="scss">
-@import "../../commons/css/themes/dark.css";
 @import "../../assets/iconfont/iconfont.css";
 @font-face {
   font-family: YouSheBiaoTiHei2;
@@ -303,7 +298,18 @@ onMounted(() => {
 }
 
 .el-switch {
-  
+  --el-switch-on-color: #141414;
+}
+
+.bg-color-icon-dark {
+  font-size: 20px;
+  border-radius: 50%;
+  color: #cfd3dc;
+  background-color: #141414;
+}
+
+.bg-color-icon-light {
+  color: #606266;
 }
 
 .dataScreen-header .header-right {
