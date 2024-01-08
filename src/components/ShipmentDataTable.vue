@@ -81,10 +81,10 @@
     >
       <template #default="scope">
         <el-tag
-          size="default"
-          :color="scope.row.state === '欠货' ? '#be2534' : '#13192f'"
+          v-if="scope.row.state === '欠货'"
           :type="scope.row.state === '欠货' ? 'danger' : ''"
           effect="dark"
+          :color="scope.row.state === '欠货' ? '#be2534' : '#ffffff'"
         >
           {{ scope.row.state }}
         </el-tag>

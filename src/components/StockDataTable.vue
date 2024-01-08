@@ -2,9 +2,8 @@
   <el-table
     class="table"
     size="small"
-    :header-row-style="headerStyle"
-    :header-cell-style="headerCellStyle"
-    :row-class-name="tableRowClassName"
+    header-row-class-name="headerStyle"
+    cell-class-name="cell-class"
   >
     <el-table-column prop="item" label="序号" width="180" align="center" sortable />
     <el-table-column
@@ -70,26 +69,6 @@ const tableData = computed(() => props.records);
 
 console.log("tableData:" + props.records);
 
-const tableRowClassName = ({ row }: { row: Product; rowIndex: number }) => {
-  if (row.state === "预留") {
-    return "send-row";
-  } else if (row.state === "在库") {
-    return "in-stock-row";
-  }
-  return "in-stock-row";
-};
-
-const headerStyle = {
-  height: "50px",
-  color: "#ffffff",
-  "font-size": "20px",
-};
-
-const headerCellStyle = {
-  "background-color": "#13192f",
-  padding: 0,
-};
-
 // filters 去重
 const distinct = (array: string[]) => {
   let distinctArr: string[] = [];
@@ -148,6 +127,20 @@ const filterHandler = (value: any, row: Product, column: TableColumnCtx<Product>
 <style>
 .el-table {
   --el-table-row-hover-bg-color: #3cb371;
+}
+
+.headerStyle {
+  height: 50px;
+  color: var(--color-table-header);
+  font-size: 20px;
+}
+
+.cell-class {
+  background-color: var(--bg-color-cell);
+}
+
+.el-table th.el-table__cell {
+  background-color: var(--bg-color-table-header);
 }
 
 .el-table .warning-row {

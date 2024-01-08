@@ -8,6 +8,20 @@
             <div class="header-logo">
               <span class="header-screening">鸿通</span>
             </div>
+            <div class="date-pick">
+              <el-switch size="large" v-model="mode" @change="changeMode">
+                <template #active-action>
+                  <span
+                    class="custom-inactive-action icon iconfont icon-yejianmoshi bg-color-icon-dark"
+                  />
+                </template>
+                <template #inactive-action>
+                  <span
+                    class="custom-inactive-action icon iconfont icon-baitianmoshimingliangmoshi bg-color-icon-light"
+                  />
+                </template>
+              </el-switch>
+            </div>
           </div>
           <div class="header-ct">
             <div class="header-ct-title">
@@ -69,6 +83,8 @@ import StockDataTable from "../../components/StockDataTable.vue";
 // 鸿通 logo
 import circleUrl from "../../assets/鸿通logo.png";
 
+// 白天/夜间模式
+const mode = ref(false);
 // 日期选择器 开始、结束 日期
 const dateArr = ref("");
 // 实时获取时间
@@ -112,6 +128,17 @@ const shortcuts = [
 // 获取当前时间
 const getCurrentTime = () => {
   dateTime.value = currentTime(new Date());
+};
+
+/**
+ * 切换白天/夜间模式
+ */
+const changeMode = () => {
+  if (mode.value === true) {
+    document.body.setAttribute("theme", "dark");
+  } else {
+    document.body.setAttribute("theme", "light");
+  }
 };
 
 // 初始化表格数据
@@ -224,6 +251,7 @@ onMounted(() => {
 </script>
 
 <style scoped>
+@import "../../assets/iconfont/iconfont.css";
 @font-face {
   font-family: YouSheBiaoTiHei2;
   src: url("../../commons/fonts/YouSheBiaoTiHei-2.ttf");
@@ -235,7 +263,8 @@ onMounted(() => {
   width: 100%;
   height: 100%;
   position: fixed;
-  background-image: url("../../assets/background.png");
+  background-color: var(--bg-color-container);
+  background-image: var(--bg-img-container);
   text-align: center;
 }
 
@@ -243,7 +272,7 @@ onMounted(() => {
   margin-top: 20px;
   height: 15%;
   text-align: center;
-  color: #ffffff;
+  color: var(--color-header);
 }
 
 .dataScreen-header {
@@ -264,7 +293,22 @@ onMounted(() => {
   top: 15%;
   margin: 0 auto;
   font-size: 1.5rem;
-  color: #05e8fe;
+  color: var(--color-header);
+}
+
+.el-switch {
+  --el-switch-on-color: #141414;
+}
+
+.bg-color-icon-dark {
+  font-size: 20px;
+  border-radius: 50%;
+  color: #cfd3dc;
+  background-color: #141414;
+}
+
+.bg-color-icon-light {
+  color: #606266;
 }
 
 .dataScreen-header .header-right {
@@ -290,14 +334,14 @@ onMounted(() => {
 .right-font {
   top: 15%;
   font-size: 1.5rem;
-  color: #05e8fe;
+  color: var(--color-header);
 }
 
 .dataScreen-header .header-rg .header-time {
   top: 15%;
   margin: 0 auto;
   font-size: 1.5rem;
-  color: #05e8fe;
+  color: var(--color-header);
 }
 
 .date-pick {
@@ -336,7 +380,7 @@ onMounted(() => {
   height: 100%;
   font-size: 32px;
   line-height: 78px;
-  color: #05e8fe;
+  color: var(--color-header);
   text-align: center;
   letter-spacing: 4px;
   background: url("../../assets/dataScreen-header-center-bg.png") no-repeat;
@@ -374,19 +418,19 @@ onMounted(() => {
 }
 
 :deep(.el-pagination .el-pager li:not(.disabled)) {
-  background-color: #13192f;
+  background-color: var(--bg-color-pager-li-not-disabled);
 }
 
 :deep(.el-pager li) {
-  color: #ffffff;
+  color: var(--color-pager-li);
 }
 
 :deep(.el-pager li.is-active) {
-  color: #05e8fe;
+  color: var(--color-pager-li-is-active);
 }
 
 :deep(.el-pagination button) {
-  background-color: #13192f;
-  color: #ffffff;
+  background-color: var(--bg-color-pagination-button);
+  color: var(--color-pagination-button);
 }
 </style>
