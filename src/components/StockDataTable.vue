@@ -4,13 +4,13 @@
     size="small"
     header-row-class-name="headerStyle"
     cell-class-name="cell-class"
+    @filter-change="filterChange"
   >
-    <el-table-column prop="item" label="序号" width="180" align="center" sortable />
     <el-table-column
       prop="partNumber"
       label="PartNumber"
-      width="180"
       align="center"
+      column-key="pn"
       :filters="pnFilters"
       :filter-method="filterHandler"
     />
@@ -23,8 +23,8 @@
     />
     <el-table-column prop="uid" label="UID" align="center" />
     <el-table-column prop="batch" label="批次号" align="center" />
-    <el-table-column prop="quantity" label="数量" align="center" />
-    <el-table-column prop="plant" label="工厂" align="center" />
+    <el-table-column prop="quantity" label="数量" width="80" align="center" />
+    <el-table-column prop="plant" label="工厂" width="80" align="center" />
     <el-table-column
       prop="state"
       label="状态"
@@ -35,6 +35,7 @@
     <el-table-column
       prop="storageLoc"
       label="仓位"
+      width="80"
       align="center"
       :filter-method="filterHandler"
     />
@@ -48,7 +49,6 @@ import type { TableColumnCtx } from "element-plus";
 
 export interface Product {
   [key: string]: any;
-  item: number;
   partNumber: string;
   wo: string;
   uid: string;
@@ -63,11 +63,16 @@ export interface Product {
 // 父组件传递数组
 const props = defineProps<{
   records: Product[];
+  allData: Product[];
 }>();
 
-const tableData = computed(() => props.records);
+const emits = defineEmits<{
+  (e: 'findByParam', partNumber: string): void
+}>();
 
-console.log("tableData:" + props.records);
+const allData = computed(() => props.allData);
+
+console.log("allData:" + props.records);
 
 // filters 去重
 const distinct = (array: string[]) => {
@@ -85,33 +90,33 @@ const distinct = (array: string[]) => {
   return newArr;
 };
 
-// partNumber 去重
+// 物料号筛选
 const pnFilters = computed(() => {
   let pnArr: string[] = [];
   // 所有 partNumber 抽出来装入集合
-  tableData.value.forEach((item) => {
+  allData.value.forEach((item) => {
     pnArr.push(item.partNumber);
   });
   // 去重
   return distinct(pnArr);
 });
 
-// 工单去重
+// 工单筛选
 const woFilters = computed(() => {
   let woArr: string[] = [];
   // 所有工单抽出来装入集合
-  tableData.value.forEach((item) => {
+  allData.value.forEach((item) => {
     woArr.push(item.wo);
   });
   // 去重
   return distinct(woArr);
 });
 
-// 状态去重
+// 状态筛选
 const stateFilters = computed(() => {
   let stateArr: string[] = [];
   // 所有工单抽出来装入集合
-  tableData.value.forEach((item) => {
+  allData.value.forEach((item) => {
     stateArr.push(item.state.toString());
   });
   // 去重
@@ -119,8 +124,12 @@ const stateFilters = computed(() => {
 });
 
 const filterHandler = (value: any, row: Product, column: TableColumnCtx<Product>) => {
-  const property = column["property"];
-  return row[property] === value;
+  // emits('findByParam', value);
+};
+
+const filterChange = (filters: any) => {
+  console.log(filters.pn);
+  emits('findByParam', filters.pn);
 };
 </script>
 

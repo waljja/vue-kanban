@@ -57,7 +57,12 @@
         </div>
       </el-header>
       <el-main class="main">
-        <StockDataTable :data="records" :records="records" />
+        <StockDataTable
+          :data="records"
+          :records="records"
+          :allData="allData"
+          @findByParam="findByParam([])"
+        />
         <el-pagination
           v-model:current-page="currentPage"
           layout="prev, pager, next"
@@ -95,6 +100,8 @@ const currentPage = ref();
 var records = ref([]);
 // 返回总记录数
 var total = ref(20);
+// 全部数据（成品待入库）
+var allData = ref([]);
 const shortcuts = [
   {
     text: "上周",
@@ -211,8 +218,44 @@ const exportExcel = async () => {
     });
 };
 
-// 切换页面
+/**
+ * 筛选
+ */
+const findByParam = (partNumber: []) => {
+  console.log("筛选");
+  let pns = "";
+  if (partNumber.length != 0 && partNumber != null && partNumber != undefined) {
+    partNumber.forEach((element) => {
+      pns += element + ",";
+    });
+  }
+  var page;
+  if (currentPage.value !== undefined) {
+    page = currentPage.value;
+  } else {
+    page = "1";
+  }
+  axios
+    .get("/kanban/product-storage/get-data", {
+      params: {
+        current: page,
+        pns: pns.slice(0, -1),
+      },
+    })
+    .then((res) => {
+      console.log(res.data.data.records);
+      records.value = res.data.data.records;
+    })
+    .catch((error) => {
+      console.log("获取数据接口错误（Stock切换）: " + error);
+    });
+};
+
+/**
+ * 切换页面
+ */
 const handlePageChange = () => {
+  console.log("切换");
   var page;
   if (currentPage.value !== undefined) {
     page = currentPage.value;
@@ -236,6 +279,21 @@ const handlePageChange = () => {
     });
 };
 
+/**
+ * 获取所有成品待入库数据
+ */
+const getAllData = () => {
+  axios
+    .get("/kanban/product-storage/get-all")
+    .then((res) => {
+      allData.value = res.data.data;
+    })
+    .catch((error) => {
+      console.log("获取数据接口错误（获取所有成品待入库数据）: " + error);
+    });
+};
+getAllData();
+
 // 实时获取
 onMounted(() => {
   setInterval(() => {
@@ -244,8 +302,8 @@ onMounted(() => {
   // 1分钟刷新一次看板数据
   setInterval(async () => {
     console.log("refresh data: " + new Date().toLocaleTimeString());
-    // 保留当前页码
     handlePageChange();
+    getAllData();
   }, 60000);
 });
 </script>

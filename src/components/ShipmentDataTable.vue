@@ -16,22 +16,22 @@
     />
     <el-table-column
       prop="loadingTime"
-      label="装车时间"
-      width="160"
+      label="车辆预计抵达时间"
+      width="200"
       align="center"
       sortable
     />
     <el-table-column
       prop="shipmentCar"
       label="出货车型"
-      width="180"
+      width="120"
       align="center"
       sortable
     />
     <el-table-column
       prop="licenseNumber"
       label="车牌号"
-      width="180"
+      width="120"
       align="center"
       sortable
     />
@@ -63,18 +63,26 @@
     <el-table-column
       prop="clientCode"
       label="客户编号"
+      width="130"
       align="center"
       :filters="clientFilters"
       :filter-method="filterHandler"
     />
-    <el-table-column prop="shipmentQty" label="出货数量" align="center" sortable />
-    <el-table-column prop="boxQty" label="装箱数" align="center" />
-    <el-table-column prop="palletQty" label="卡板数" align="center" />
-    <el-table-column prop="toNo" label="TO单" width="180" align="center" sortable />
-    <el-table-column prop="toQty" label="TO数量" width="180" align="center" sortable />
+    <el-table-column
+      prop="shipmentQty"
+      label="出货数量"
+      width="130"
+      align="center"
+      sortable
+    />
+    <el-table-column prop="boxQty" label="装箱数" width="130" align="center" />
+    <el-table-column prop="palletQty" label="卡板数" width="130" align="center" />
+    <el-table-column prop="toNo" label="TO单" align="center" sortable />
+    <el-table-column prop="toQty" label="TO数量" width="130" align="center" sortable />
     <el-table-column
       prop="state"
       label="状态"
+      width="130"
       align="center"
       :filters="stateFilters"
       :filter-method="filterHandler"

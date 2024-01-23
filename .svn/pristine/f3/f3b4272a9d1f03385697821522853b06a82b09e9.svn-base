@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" href="/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>成品仓看板</title>
+</head>
+
+<body theme="light">
+  <div id="app"></div>
+  <script type="module" src="/src/main.ts"></script>
+  <style type="text/css">
+    body[theme="light"] {
+      --bg-color-container: #f4f5f5;
+      --color-header: #0c0707;
+      --color-table: #000000;
+      --color-table-header: #000000;
+      --bg-color-table-header: #e6e8eb;
+      --bg-color-cell: #ffffff;
+    }
+
+    body[theme="dark"] {
+      --bg-color-container: #181616;
+      --bg-img-container: url("src/assets/background.png");
+      --color-header: #05e8fe;
+      --color-table: #ffffff;
+      --color-table-header: #000000;
+      --bg-color-table-header: #eef0f3;
+      --bg-color-cell: #13192f;
+      --bg-color-pager-li-not-disabled: #13192f;
+      --color-pager-li: #ffffff;
+      --color-pager-li-is-active: #05e8fe;
+      --bg-color-pagination-button: #13192f;
+      --color-pagination-button: #ffffff;
+    }
+  </style>
+</body>
+
+</html>
