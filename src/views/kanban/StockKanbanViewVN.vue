@@ -6,7 +6,7 @@
           <div class="header-lf">
             <el-avatar class="logo" :size="43" :src="circleUrl" />
             <div class="header-logo">
-              <span class="header-screening">鸿通</span>
+              <span class="header-screening">{{ $t("msg.ht") }}</span>
             </div>
             <div class="date-pick">
               <el-switch size="large" v-model="mode" @change="changeMode">
@@ -21,11 +21,29 @@
                   />
                 </template>
               </el-switch>
+              <el-dropdown class="el-dropdown-link" @command="handleCommand">
+                <span>
+                  <i class="icon iconfont icon-yuyan2 font-icon-dark" />
+                  <el-icon class="el-icon--right"><arrow-down /></el-icon>
+                </span>
+                <template #dropdown>
+                  <el-dropdown-menu>
+                    <el-dropdown-item command="zh">
+                      <span class="font-dropdown-menu">中文</span>
+                    </el-dropdown-item>
+                    <el-dropdown-item command="vi">
+                      <span class="font-dropdown-menu">Tiếng Việt</span>
+                    </el-dropdown-item>
+                  </el-dropdown-menu>
+                </template>
+              </el-dropdown>
             </div>
           </div>
           <div class="header-ct">
             <div class="header-ct-title">
-              <span class="title-font-size">成品出货计划看板</span>
+              <span class="title-font-size">
+                {{ $t("msg.kanbanProductStockPendingManagement") }}
+              </span>
             </div>
           </div>
           <div class="header-right">
@@ -33,7 +51,7 @@
               <div class="header-rg-f">
                 <span class="right-font">MES</span>
               </div>
-              <span class="header-time">当前时间: {{ dateTime }}</span>
+              <span class="header-time">{{ dateTime }}</span>
             </div>
             <div class="date-pick">
               <el-date-picker
@@ -43,21 +61,26 @@
                 type="daterange"
                 unlink-panels
                 range-separator="--->"
-                start-placeholder="开始日期"
-                end-placeholder="结束日期"
+                start-placeholder="ngày xuất hàng"
+                end-placeholder="kiểu xe xuất hàng"
                 size="default"
                 :shortcuts="shortcuts"
               />
-              <el-button class="filter" type="success" @click="filter">筛选</el-button>
+              <el-button class="filter" type="success" @click="filter">{{ $t("msg.filter") }}</el-button>
               <el-button class="export" type="primary" @click="exportExcel">
-                导出
+                {{ $t("msg.export") }}
               </el-button>
             </div>
           </div>
         </div>
       </el-header>
       <el-main class="main">
-        <ShipmentDataTable :data="records" :records="records" />
+        <StockDataTable
+          :data="records"
+          :records="records"
+          :allData="allData"
+          @findByParam="findByParam"
+        />
         <el-pagination
           v-model:current-page="currentPage"
           layout="prev, pager, next"
@@ -79,7 +102,7 @@ import zhCn from "element-plus/dist/locale/zh-cn.mjs";
 import currentTime from "../../commons/ts/currentTime";
 import axios from "../../axios/axios";
 // 表格
-import ShipmentDataTable from "../../components/ShipmentDataTable.vue";
+import StockDataTable from "../../components/StockDataTableVN.vue";
 // 鸿通 logo
 import circleUrl from "../../assets/鸿通logo.png";
 
@@ -95,6 +118,8 @@ const currentPage = ref();
 var records = ref([]);
 // 返回总记录数
 var total = ref(20);
+// 全部数据（成品待入库）
+var allData = ref([]);
 const shortcuts = [
   {
     text: "上周",
@@ -126,8 +151,18 @@ const shortcuts = [
 ];
 
 /**
- * 获取当前时间
+ * 切换语言
+ * @param command 语言
  */
+const handleCommand = (command: string | object) => {
+  if (command == "vi") {
+    location.href = "http://127.0.0.1:5173/stock-kanban-VN";
+  } else {
+    location.href = "http://127.0.0.1:5173/stock-kanban-CN";
+  }
+};
+
+// 获取当前时间
 const getCurrentTime = () => {
   dateTime.value = currentTime(new Date());
 };
@@ -143,12 +178,10 @@ const changeMode = () => {
   }
 };
 
-/**
- * 初始化表格数据
- */
+// 初始化表格数据
 const initTable = () => {
   axios
-    .get("/kanban/product-shipment/get-data", {
+    .get("/kanban/product-storage/get-data", {
       params: {
         current: 1,
       },
@@ -159,17 +192,15 @@ const initTable = () => {
       console.log(records.value);
     })
     .catch((error) => {
-      console.log("初始化: " + error);
+      console.log("初始化（Stock）" + error);
     });
 };
 initTable();
 
-/**
- * 根据日期筛选工单信息
- */
+// 根据日期筛选工单信息
 const filter = () => {
   axios
-    .get("/kanban/product-shipment/get-data", {
+    .get("/kanban/product-storage/get-data", {
       params: {
         current: 1,
         startDate: dateArr.value[0],
@@ -182,16 +213,21 @@ const filter = () => {
       total.value = res.data.data.total;
     })
     .catch((error) => {
-      console.log("获取数据接口错误（筛选）：" + error);
+      console.log("获取数据接口错误（Stock筛选）: " + error);
     });
 };
 
-/**
- * 导出 Excel 报表
- */
+// 导出 Excel 报表
 const exportExcel = async () => {
   return axios
-    .get("/product/report/download", { responseType: "blob" })
+    .get("/kanban/stock-report/download", {
+      params: {
+        current: 1,
+        startDate: dateArr.value[0],
+        endDate: dateArr.value[1],
+      },
+      responseType: "blob",
+    })
     .then((res) => {
       let blob = new Blob([res.data], {
         // 接收数据类型
@@ -212,8 +248,17 @@ const exportExcel = async () => {
     });
 };
 
-// 切换页面
-const handlePageChange = () => {
+/**
+ * 筛选
+ */
+const findByParam = (partNumber: []) => {
+  console.log("筛选");
+  let pns = "";
+  if (partNumber.length != 0 && partNumber != null && partNumber != undefined) {
+    partNumber.forEach((element) => {
+      pns += element + ",";
+    });
+  }
   var page;
   if (currentPage.value !== undefined) {
     page = currentPage.value;
@@ -221,7 +266,34 @@ const handlePageChange = () => {
     page = "1";
   }
   axios
-    .get("/kanban/product-shipment/get-data", {
+    .get("/kanban/product-storage/get-data", {
+      params: {
+        current: page,
+        pns: pns.slice(0, -1),
+      },
+    })
+    .then((res) => {
+      console.log(res.data.data.records);
+      records.value = res.data.data.records;
+    })
+    .catch((error) => {
+      console.log("获取数据接口错误（Stock切换）: " + error);
+    });
+};
+
+/**
+ * 切换页面
+ */
+const handlePageChange = () => {
+  console.log("切换");
+  var page;
+  if (currentPage.value !== undefined) {
+    page = currentPage.value;
+  } else {
+    page = "1";
+  }
+  axios
+    .get("/kanban/product-storage/get-data", {
       params: {
         current: page,
         startDate: dateArr.value[0],
@@ -233,9 +305,24 @@ const handlePageChange = () => {
       records.value = res.data.data.records;
     })
     .catch((error) => {
-      console.log("获取数据接口错误（切换）：" + error);
+      console.log("获取数据接口错误（Stock切换）: " + error);
     });
 };
+
+/**
+ * 获取所有成品待入库数据
+ */
+const getAllData = () => {
+  axios
+    .get("/kanban/product-storage/get-all")
+    .then((res) => {
+      allData.value = res.data.data;
+    })
+    .catch((error) => {
+      console.log("获取数据接口错误（获取所有成品待入库数据）: " + error);
+    });
+};
+getAllData();
 
 // 实时获取
 onMounted(() => {
@@ -245,8 +332,8 @@ onMounted(() => {
   // 1分钟刷新一次看板数据
   setInterval(async () => {
     console.log("refresh data: " + new Date().toLocaleTimeString());
-    // 保留当前页码
     handlePageChange();
+    getAllData();
   }, 60000);
 });
 </script>
@@ -256,6 +343,10 @@ onMounted(() => {
 @font-face {
   font-family: YouSheBiaoTiHei2;
   src: url("../../commons/fonts/YouSheBiaoTiHei-2.ttf");
+}
+@font-face {
+  font-family: Oppo-Sans;
+  src: url("../../commons/fonts/OPlusSans3-Regular.ttf");
 }
 
 .container {
@@ -310,6 +401,25 @@ onMounted(() => {
 
 .bg-color-icon-light {
   color: #606266;
+}
+
+.el-dropdown {
+  --el-dropdown-menuItem-hover-color: #cfd3dc;
+}
+
+.el-dropdown-link {
+  left: 20%;
+  top: 7px;
+}
+
+.font-icon-dark {
+  font-size: 1.5rem;
+  border: #cfd3dc;
+}
+
+.font-dropdown-menu {
+  font-size: 1.2rem;
+  font-family: Oppo-Sans;
 }
 
 .dataScreen-header .header-right {
@@ -380,7 +490,7 @@ onMounted(() => {
   width: 100%;
   height: 100%;
   font-size: 32px;
-  line-height: 78px;
+  line-height: 40px;
   text-align: center;
   letter-spacing: 4px;
   background: url("../../assets/dataScreen-header-center-bg.png") no-repeat;
@@ -402,7 +512,7 @@ onMounted(() => {
 }
 
 .title-font-size {
-  font-size: 3.8rem;
+  font-size: 2.3rem;
   top: 15px;
 }
 

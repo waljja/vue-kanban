@@ -12,7 +12,11 @@ declare module '@vue/runtime-core' {
     ElConfigProvider: typeof import('element-plus/es')['ElConfigProvider']
     ElContainer: typeof import('element-plus/es')['ElContainer']
     ElDatePicker: typeof import('element-plus/es')['ElDatePicker']
+    ElDropdown: typeof import('element-plus/es')['ElDropdown']
+    ElDropdownItem: typeof import('element-plus/es')['ElDropdownItem']
+    ElDropdownMenu: typeof import('element-plus/es')['ElDropdownMenu']
     ElHeader: typeof import('element-plus/es')['ElHeader']
+    ElIcon: typeof import('element-plus/es')['ElIcon']
     ElMain: typeof import('element-plus/es')['ElMain']
     ElPagination: typeof import('element-plus/es')['ElPagination']
     ElPopover: typeof import('element-plus/es')['ElPopover']
@@ -22,7 +26,9 @@ declare module '@vue/runtime-core' {
     ElTag: typeof import('element-plus/es')['ElTag']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
-    ShipmentDataTable: typeof import('./src/components/ShipmentDataTable.vue')['default']
-    StockDataTable: typeof import('./src/components/StockDataTable.vue')['default']
+    ShipmentDataTableCN: typeof import('./src/components/ShipmentDataTableCN.vue')['default']
+    ShipmentDataTableVN: typeof import('./src/components/ShipmentDataTableVN.vue')['default']
+    StockDataTableCN: typeof import('./src/components/StockDataTableCN.vue')['default']
+    StockDataTableVN: typeof import('./src/components/StockDataTableVN.vue')['default']
   }
 }

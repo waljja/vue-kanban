@@ -16,22 +16,22 @@
     />
     <el-table-column
       prop="loadingTime"
-      label="车辆预计抵达时间"
-      width="200"
+      label="装车时间"
+      width="180"
       align="center"
       sortable
     />
     <el-table-column
       prop="shipmentCar"
       label="出货车型"
-      width="120"
+      width="130"
       align="center"
       sortable
     />
     <el-table-column
       prop="licenseNumber"
       label="车牌号"
-      width="120"
+      width="130"
       align="center"
       sortable
     />
@@ -44,7 +44,7 @@
     >
       <template v-slot="scope">
         <el-popover
-          title="零部件号"
+          title="物料号"
           placement="top-start"
           transition="el-fade-in-linear"
           :popper-style="popperStyle"
@@ -63,7 +63,7 @@
     <el-table-column
       prop="clientCode"
       label="客户编号"
-      width="130"
+      width="165"
       align="center"
       :filters="clientFilters"
       :filter-method="filterHandler"
@@ -71,14 +71,14 @@
     <el-table-column
       prop="shipmentQty"
       label="出货数量"
-      width="130"
+      width="192"
       align="center"
       sortable
     />
-    <el-table-column prop="boxQty" label="装箱数" width="130" align="center" />
-    <el-table-column prop="palletQty" label="卡板数" width="130" align="center" />
-    <el-table-column prop="toNo" label="TO单" align="center" sortable />
-    <el-table-column prop="toQty" label="TO数量" width="130" align="center" sortable />
+    <el-table-column prop="boxQty" label="装箱数" width="132" align="center" />
+    <el-table-column prop="palletQty" label="卡板数" align="center" />
+    <el-table-column prop="toNo" label="TO" align="center" sortable />
+    <el-table-column prop="toQty" label="TO数量" width="150" align="center" sortable />
     <el-table-column
       prop="state"
       label="状态"
@@ -215,6 +215,10 @@ const filterHandler = (value: any, row: Shipment, column: TableColumnCtx<Shipmen
   height: 50px;
   color: var(--color-table-header);
   font-size: 20px;
+}
+
+.el-table .cell {
+    line-height: 30px;
 }
 
 .cell-class {

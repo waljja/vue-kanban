@@ -23,7 +23,7 @@
     />
     <el-table-column prop="uid" label="UID" align="center" />
     <el-table-column prop="batch" label="批次号" align="center" />
-    <el-table-column prop="quantity" label="数量" width="80" align="center" />
+    <el-table-column prop="quantity" label="数量" align="center" />
     <el-table-column prop="plant" label="工厂" width="80" align="center" />
     <el-table-column
       prop="state"
@@ -34,8 +34,7 @@
     />
     <el-table-column
       prop="storageLoc"
-      label="仓位"
-      width="80"
+      label="库位"
       align="center"
       :filter-method="filterHandler"
     />
@@ -67,7 +66,7 @@ const props = defineProps<{
 }>();
 
 const emits = defineEmits<{
-  (e: 'findByParam', partNumber: string): void
+  (e: 'findByParam', partNumber: []): void
 }>();
 
 const allData = computed(() => props.allData);
