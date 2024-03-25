@@ -94,6 +94,7 @@ import zhCn from "element-plus/dist/locale/zh-cn.mjs";
 // 公用获取时间函数
 import currentTime from "../../commons/ts/currentTime";
 import axios from "../../axios/axios";
+import router from "@/router";
 // 表格
 import ShipmentDataTable from "../../components/ShipmentDataTableCN.vue";
 // 鸿通 logo
@@ -147,9 +148,9 @@ const shortcuts = [
  */
 const handleCommand = (command: string | object) => {
   if (command == "vi") {
-    location.href = "http://127.0.0.1:5173/shipment-kanban-VN";
+    router.push("/shipment-kanban-vn");
   } else {
-    location.href = "http://127.0.0.1:5173/shipment-kanban-CN";
+    router.push("/shipment-kanban-cn");
   }
 };
 

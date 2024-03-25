@@ -8,7 +8,7 @@ if (ip === "172.31.2.184") {
 } else if (ip === "172.22.9.78") {
   axios.defaults.baseURL = 'http://172.22.9.78:9008';
 } else if (ip === "192.168.50.119" || ip === "127.0.0.1" || ip === "localhost") {
-  axios.defaults.baseURL = 'http://172.22.9.78:9008';
+  axios.defaults.baseURL = 'http://172.31.2.184:9008';
 }
 
 axios.defaults.timeout = 12000
