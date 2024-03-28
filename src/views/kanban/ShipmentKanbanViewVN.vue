@@ -285,10 +285,6 @@ onMounted(() => {
 <style scoped lang="scss">
 @import "../../assets/iconfont/iconfont.css";
 @font-face {
-  font-family: YouSheBiaoTiHei2;
-  src: url("../../commons/fonts/YouSheBiaoTiHei-2.ttf");
-}
-@font-face {
   font-family: Oppo-Sans;
   src: url("../../commons/fonts/OPlusSans3-Regular.ttf");
 }
@@ -315,7 +311,7 @@ onMounted(() => {
   display: flex;
   width: 100%;
   height: 100%;
-  font-family: YouSheBiaoTiHei2;
+  font-family: Oppo-Sans;
 }
 
 .dataScreen-header .header-lf {

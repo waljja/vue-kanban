@@ -218,7 +218,7 @@ const filterHandler = (value: any, row: Shipment, column: TableColumnCtx<Shipmen
 }
 
 .el-table .cell {
-    line-height: 30px;
+  line-height: 30px;
 }
 
 .cell-class {

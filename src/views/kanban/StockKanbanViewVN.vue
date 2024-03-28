@@ -163,7 +163,9 @@ const handleCommand = (command: string | object) => {
   }
 };
 
-// 获取当前时间
+/**
+ * 获取当前时间
+ */
 const getCurrentTime = () => {
   dateTime.value = currentTime(new Date());
 };
@@ -172,6 +174,14 @@ const getCurrentTime = () => {
  * 切换白天/夜间模式
  */
 const changeMode = () => {
+  if (mode.value === true) {
+    document.body.setAttribute("theme", "dark");
+  } else {
+    document.body.setAttribute("theme", "light");
+  }
+};
+
+const changeFont = () => {
   if (mode.value === true) {
     document.body.setAttribute("theme", "dark");
   } else {
@@ -341,10 +351,6 @@ onMounted(() => {
 
 <style scoped lang="scss">
 @import "../../assets/iconfont/iconfont.css";
-@font-face {
-  font-family: YouSheBiaoTiHei2;
-  src: url("../../commons/fonts/YouSheBiaoTiHei-2.ttf");
-}
 @font-face {
   font-family: Oppo-Sans;
   src: url("../../commons/fonts/OPlusSans3-Regular.ttf");

@@ -66,7 +66,7 @@ const props = defineProps<{
 }>();
 
 const emits = defineEmits<{
-  (e: 'findByParam', partNumber: []): void
+  (e: "findByParam", partNumber: []): void;
 }>();
 
 const allData = computed(() => props.allData);
@@ -128,7 +128,7 @@ const filterHandler = (value: any, row: Product, column: TableColumnCtx<Product>
 
 const filterChange = (filters: any) => {
   console.log(filters.pn);
-  emits('findByParam', filters.pn);
+  emits("findByParam", filters.pn);
 };
 </script>
 
