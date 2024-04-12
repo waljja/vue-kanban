@@ -1,5 +1,5 @@
 <template>
-  <el-config-provider :locale="zhCn">
+  <el-config-provider :locale="vi">
     <el-container class="container">
       <el-header class="header">
         <div class="dataScreen-header">
@@ -21,7 +21,7 @@
                   />
                 </template>
               </el-switch>
-              <el-dropdown class="el-dropdown-link" @command="handleCommand">
+              <el-dropdown class="el-dropdown-link" @command="changeFont">
                 <span>
                   <i class="icon iconfont icon-yuyan2 font-icon-dark" />
                   <el-icon class="el-icon--right"><arrow-down /></el-icon>
@@ -66,7 +66,9 @@
                 size="default"
                 :shortcuts="shortcuts"
               />
-              <el-button class="filter" type="success" @click="filter">{{ $t("msg.filter") }}</el-button>
+              <el-button class="filter" type="success" @click="filter">{{
+                $t("msg.filter")
+              }}</el-button>
               <el-button class="export" type="primary" @click="exportExcel">
                 {{ $t("msg.export") }}
               </el-button>
@@ -97,7 +99,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
 // element-plus 国际化
-import zhCn from "element-plus/dist/locale/zh-cn.mjs";
+import vi from "element-plus/dist/locale/vi.mjs";
 // 公用获取时间函数
 import currentTime from "../../commons/ts/currentTime";
 import axios from "../../axios/axios";
@@ -107,19 +109,33 @@ import StockDataTable from "../../components/StockDataTableVN.vue";
 // 鸿通 logo
 import circleUrl from "../../assets/鸿通logo.png";
 
-// 白天/夜间模式
+/**
+ * 白天/夜间模式
+ */
 const mode = ref(false);
-// 日期选择器 开始、结束 日期
+/**
+ * 日期选择器 开始、结束 日期
+ */
 const dateArr = ref("");
-// 实时获取时间
+/**
+ * 实时获取时间
+ */
 const dateTime = ref("");
-// 当前页码
+/**
+ * 当前页码
+ */
 const currentPage = ref();
-// 表格分页数据
+/**
+ * 表格分页数据
+ */
 var records = ref([]);
-// 返回总记录数
+/**
+ * 返回总记录数
+ */
 var total = ref(20);
-// 全部数据（成品待入库）
+/**
+ * 全部数据（成品待入库）
+ */
 var allData = ref([]);
 const shortcuts = [
   {
@@ -155,7 +171,7 @@ const shortcuts = [
  * 切换语言
  * @param command 语言
  */
-const handleCommand = (command: string | object) => {
+const changeFont = (command: string | object) => {
   if (command == "vi") {
     router.push("/stock-kanban-vn");
   } else {
@@ -174,14 +190,6 @@ const getCurrentTime = () => {
  * 切换白天/夜间模式
  */
 const changeMode = () => {
-  if (mode.value === true) {
-    document.body.setAttribute("theme", "dark");
-  } else {
-    document.body.setAttribute("theme", "light");
-  }
-};
-
-const changeFont = () => {
   if (mode.value === true) {
     document.body.setAttribute("theme", "dark");
   } else {
@@ -208,12 +216,50 @@ const initTable = () => {
 };
 initTable();
 
-// 根据日期筛选工单信息
-const filter = () => {
+/**
+ * 获取所有成品待入库数据
+ */
+const getAllData = () => {
+  axios
+    .get("/kanban/product-storage/get-all")
+    .then((res) => {
+      // 把状态筛选的文字显示转换成越南文
+      res.data.data.forEach((item: any) => {
+        if (item.state === "待上架") {
+          item.state = "Chờ lên giá";
+        } else if (item.state === "转运中（未收货）") {
+          item.state = "Đang di chuyển ( chưa nhập kho)";
+        } else if (item.state === "转运中（已上架）") {
+          item.state = "Đang di chuyển ( đã lên giá )";
+        } else if (item.state === "待装车") {
+          item.state = "Chờ xếp xe";
+        } else if (item.state === "待拣货") {
+          item.state = "Chờ nhặt hàng";
+        } else if (item.state === "欠货") {
+          item.state === "Thiếu hàng";
+        } else if (item.state === "待绑定出货区") {
+          item.state = "Chờ Ràng buộc khu vực xuất hàng";
+        } else if (item.state === "备货中") {
+          item.state = "Chuẩn bị";
+        }
+      });
+      allData.value = res.data.data;
+    })
+    .catch((error) => {
+      console.log("获取数据接口错误（获取所有成品待入库数据）: " + error);
+    });
+};
+getAllData();
+
+/**
+ * 获取成品库存数据
+ * @param page 页码
+ */
+const getTableData = (page: number) => {
   axios
     .get("/kanban/product-storage/get-data", {
       params: {
-        current: 1,
+        current: page,
         startDate: dateArr.value[0],
         endDate: dateArr.value[1],
       },
@@ -224,11 +270,46 @@ const filter = () => {
       total.value = res.data.data.total;
     })
     .catch((error) => {
-      console.log("获取数据接口错误（Stock筛选）: " + error);
+      console.log("获取数据接口错误 - getTableData: " + error);
     });
 };
 
-// 导出 Excel 报表
+/**
+ * 根据条件获取成品库存数据
+ * @param page 页码
+ * @param pns 物料号
+ * @param states 状态
+ * @param wos 工单
+ */
+const getTableDataByParams = (page: number, pns: string, states: string, wos: string) => {
+  axios
+    .get("/kanban/product-storage/get-data", {
+      params: {
+        current: page,
+        pns: pns.slice(0, -1),
+        states: states.slice(0, -1),
+        wos: wos.slice(0, -1),
+      },
+    })
+    .then((res) => {
+      console.log(res.data.data.records);
+      records.value = res.data.data.records;
+    })
+    .catch((error) => {
+      console.log("获取数据接口错误 - getTableDataByParams: " + error);
+    });
+};
+
+/**
+ * 根据日期筛选工单信息
+ */
+const filter = () => {
+  getTableData(1);
+};
+
+/**
+ * 导出Excel报表
+ */
 const exportExcel = async () => {
   return axios
     .get("/kanban/stock-report/download", {
@@ -262,12 +343,41 @@ const exportExcel = async () => {
 /**
  * 筛选
  */
-const findByParam = (partNumber: []) => {
-  console.log("筛选");
+const findByParam = (pnArr: [], stateArr: [], woArr: []) => {
   let pns = "";
-  if (partNumber.length != 0 && partNumber != null && partNumber != undefined) {
-    partNumber.forEach((element) => {
+  if (pnArr != null && pnArr != undefined && pnArr.length != 0) {
+    pnArr.forEach((element) => {
       pns += element + ",";
+    });
+  }
+  let states = "";
+  if (stateArr != null && stateArr != undefined && stateArr.length != 0) {
+    // 把筛选的状态转换回中文
+    stateArr.forEach((element: string) => {
+      if (element === "Chờ lên giá") {
+        element = "待上架";
+      } else if (element === "Đang di chuyển ( chưa nhập kho)") {
+        element = "转运中（未收货）";
+      } else if (element === "Đang di chuyển ( đã lên giá )") {
+        element = "转运中（已上架）";
+      } else if (element === "Chờ xếp xe") {
+        element = "待装车";
+      } else if (element === "Chờ nhặt hàng") {
+        element = "待拣货";
+      } else if (element === "Thiếu hàng") {
+        element = "欠货";
+      } else if (element === "Chờ Ràng buộc khu vực xuất hàng") {
+        element = "待绑定出货区";
+      } else if (element === "Chuẩn bị") {
+        element = "备货中";
+      }
+      states += element + ",";
+    });
+  }
+  let wos = "";
+  if (woArr != null && woArr != undefined && woArr.length != 0) {
+    woArr.forEach((element) => {
+      wos += element + ",";
     });
   }
   var page;
@@ -276,20 +386,7 @@ const findByParam = (partNumber: []) => {
   } else {
     page = "1";
   }
-  axios
-    .get("/kanban/product-storage/get-data", {
-      params: {
-        current: page,
-        pns: pns.slice(0, -1),
-      },
-    })
-    .then((res) => {
-      console.log(res.data.data.records);
-      records.value = res.data.data.records;
-    })
-    .catch((error) => {
-      console.log("获取数据接口错误（Stock切换）: " + error);
-    });
+  getTableDataByParams(page, pns, states, wos);
 };
 
 /**
@@ -303,37 +400,8 @@ const handlePageChange = () => {
   } else {
     page = "1";
   }
-  axios
-    .get("/kanban/product-storage/get-data", {
-      params: {
-        current: page,
-        startDate: dateArr.value[0],
-        endDate: dateArr.value[1],
-      },
-    })
-    .then((res) => {
-      console.log(res.data.data.records);
-      records.value = res.data.data.records;
-    })
-    .catch((error) => {
-      console.log("获取数据接口错误（Stock切换）: " + error);
-    });
+  getTableData(page);
 };
-
-/**
- * 获取所有成品待入库数据
- */
-const getAllData = () => {
-  axios
-    .get("/kanban/product-storage/get-all")
-    .then((res) => {
-      allData.value = res.data.data;
-    })
-    .catch((error) => {
-      console.log("获取数据接口错误（获取所有成品待入库数据）: " + error);
-    });
-};
-getAllData();
 
 // 实时获取
 onMounted(() => {
@@ -378,7 +446,7 @@ onMounted(() => {
   display: flex;
   width: 100%;
   height: 100%;
-  font-family: Oppo-Sans;
+  font-family: "Times New Roman";
 }
 
 .dataScreen-header .header-lf {

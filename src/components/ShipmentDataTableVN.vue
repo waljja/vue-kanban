@@ -78,7 +78,13 @@
     <el-table-column prop="boxQty" label="số xếp thùng" width="132" align="center" />
     <el-table-column prop="palletQty" label="số palet" align="center" />
     <el-table-column prop="toNo" label="TO" align="center" sortable />
-    <el-table-column prop="toQty" label="TO Số lượng" width="150" align="center" sortable />
+    <el-table-column
+      prop="toQty"
+      label="TO Số lượng"
+      width="150"
+      align="center"
+      sortable
+    />
     <el-table-column
       prop="state"
       label="trạng thái"
@@ -86,6 +92,7 @@
       align="center"
       :filters="stateFilters"
       :filter-method="filterHandler"
+      :formatter="formatter"
     >
       <template #default="scope">
         <el-tag
@@ -94,7 +101,7 @@
           effect="dark"
           :color="scope.row.state === '欠货' ? '#be2534' : '#ffffff'"
         >
-          {{ scope.row.state }}
+          Thiếu hàng
         </el-tag>
       </template>
     </el-table-column>
@@ -199,6 +206,30 @@ const filterHandler = (value: any, row: Shipment, column: TableColumnCtx<Shipmen
   const property = column["property"];
   return row[property] === value;
 };
+
+/**
+ * 状态转为越南语显示
+ * @param row 表格行数据
+ */
+const formatter = (row: Shipment) => {
+  if (row.state == "待上架") {
+    return "Chờ lên giá";
+  } else if (row.state === "转运中（未收货）") {
+    return "Đang di chuyển ( chưa nhập kho)";
+  } else if (row.state === "转运中（已上架）") {
+    return "Đang di chuyển ( đã lên giá )";
+  } else if (row.state === "待装车") {
+    return "Chờ xếp xe";
+  } else if (row.state === "待拣货") {
+    return "Chờ nhặt hàng";
+  } else if (row.state === "欠货") {
+    return "Thiếu hàng";
+  } else if (row.state === "待绑定出货区") {
+    return "Chờ Ràng buộc khu vực xuất hàng";
+  } else if (row.state === "备货中") {
+    return "Chuẩn bị";
+  }
+};
 </script>
 
 <style>
@@ -218,7 +249,7 @@ const filterHandler = (value: any, row: Shipment, column: TableColumnCtx<Shipmen
 }
 
 .el-table .cell {
-    line-height: 30px;
+  line-height: 30px;
 }
 
 .cell-class {

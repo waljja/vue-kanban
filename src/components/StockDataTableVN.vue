@@ -3,6 +3,7 @@
     class="table"
     size="small"
     header-row-class-name="headerStyle"
+    row-class-name="row-class"
     cell-class-name="cell-class"
     @filter-change="filterChange"
   >
@@ -18,6 +19,7 @@
       prop="wo"
       label="công đơn"
       align="center"
+      column-key="wo"
       :filters="woFilters"
       :filter-method="filterHandler"
     />
@@ -29,8 +31,10 @@
       prop="state"
       label="trạng thái"
       align="center"
+      column-key="state"
       :filters="stateFilters"
       :filter-method="filterHandler"
+      :formatter="formatter"
     />
     <el-table-column
       prop="storageLoc"
@@ -66,12 +70,12 @@ const props = defineProps<{
 }>();
 
 const emits = defineEmits<{
-  (e: 'findByParam', partNumber: []): void
+  (e: 'findByParam', pnArr: [], stateArr: [], woArr: []): void
 }>();
 
 const allData = computed(() => props.allData);
 
-console.log("allData:" + props.records);
+console.log("records: " + props.records);
 
 // filters 去重
 const distinct = (array: string[]) => {
@@ -114,7 +118,7 @@ const woFilters = computed(() => {
 // 状态筛选
 const stateFilters = computed(() => {
   let stateArr: string[] = [];
-  // 所有工单抽出来装入集合
+  // 所有状态抽出来装入集合
   allData.value.forEach((item) => {
     stateArr.push(item.state.toString());
   });
@@ -127,8 +131,31 @@ const filterHandler = (value: any, row: Product, column: TableColumnCtx<Product>
 };
 
 const filterChange = (filters: any) => {
-  console.log(filters.pn);
-  emits('findByParam', filters.pn);
+  emits('findByParam', filters.pn, filters.state, filters.wo);
+};
+
+/**
+ * 状态转为越南语显示
+ * @param row 表格行数据
+ */
+ const formatter = (row: Product) => {
+  if (row.state == "待上架") {
+    return "Chờ lên giá";
+  } else if (row.state === "转运中（未收货）") {
+    return "Đang di chuyển ( chưa nhập kho)";
+  } else if (row.state === "转运中（已上架）") {
+    return "Đang di chuyển ( đã lên giá )";
+  } else if (row.state === "待装车") {
+    return "Chờ xếp xe";
+  } else if (row.state === "待拣货") {
+    return "Chờ nhặt hàng";
+  } else if (row.state === "欠货") {
+    return "Thiếu hàng";
+  } else if (row.state === "待绑定出货区") {
+    return "Chờ Ràng buộc khu vực xuất hàng";
+  } else if (row.state === "备货中") {
+    return "Chuẩn bị";
+  }
 };
 </script>
 
@@ -138,9 +165,15 @@ const filterChange = (filters: any) => {
 }
 
 .headerStyle {
-  height: 50px;
   color: var(--color-table-header);
-  font-size: 20px;
+}
+
+.header-class {
+  line-height: 50px;
+}
+
+.row-class {
+  line-height: 10px;
 }
 
 .cell-class {
@@ -165,7 +198,6 @@ const filterChange = (filters: any) => {
 }
 
 .table {
-  font-size: 15px;
   color: #000000;
 }
 </style>

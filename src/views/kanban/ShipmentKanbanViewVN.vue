@@ -311,7 +311,7 @@ onMounted(() => {
   display: flex;
   width: 100%;
   height: 100%;
-  font-family: Oppo-Sans;
+  font-family: 'Times New Roman';
 }
 
 .dataScreen-header .header-lf {
