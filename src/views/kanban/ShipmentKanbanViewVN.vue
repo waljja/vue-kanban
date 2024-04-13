@@ -196,6 +196,66 @@ const initTable = () => {
 initTable();
 
 /**
+ * 获取所有成品待入库数据
+ */
+// const getAllData = () => {
+//   axios
+//     .get("/kanban/product-storage/get-all")
+//     .then((res) => {
+//       // 把状态筛选的文字显示转换成越南文
+//       res.data.data.forEach((item: any) => {
+//         if (item.state === "待上架") {
+//           item.state = "Chờ lên giá";
+//         } else if (item.state === "转运中（未收货）") {
+//           item.state = "Đang di chuyển ( chưa nhập kho)";
+//         } else if (item.state === "转运中（已上架）") {
+//           item.state = "Đang di chuyển ( đã lên giá )";
+//         } else if (item.state === "待装车") {
+//           item.state = "Chờ xếp xe";
+//         } else if (item.state === "待拣货") {
+//           item.state = "Chờ nhặt hàng";
+//         } else if (item.state === "欠货") {
+//           item.state === "Thiếu hàng";
+//         } else if (item.state === "待绑定出货区") {
+//           item.state = "Chờ Ràng buộc khu vực xuất hàng";
+//         } else if (item.state === "备货中") {
+//           item.state = "Chuẩn bị";
+//         }
+//       });
+//       allData.value = res.data.data;
+//     })
+//     .catch((error) => {
+//       console.log("获取数据接口错误（获取所有成品待入库数据）: " + error);
+//     });
+// };
+// getAllData();
+
+/**
+ * 根据条件获取待出货物料数据
+ * @param page 页码
+ * @param pns 物料号
+ * @param states 状态
+ * @param wos 工单
+ */
+// const getTableDataByParams = (page: number, shipNumbers: string, states: string, pos: string) => {
+//   axios
+//     .get("/kanban/product-shipment/get-data", {
+//       params: {
+//         current: page,
+//         startDate: dateArr.value[0],
+//         endDate: dateArr.value[1],
+//       },
+//     })
+//     .then((res) => {
+//       console.log(res.data.data.records);
+//       records.value = res.data.data.records;
+//     })
+//     .catch((error) => {
+//       console.log("获取数据接口错误（切换）：" + error);
+//     });
+// };
+
+/**
  * 根据日期筛选工单信息
  */
 const filter = () => {
@@ -311,7 +371,7 @@ onMounted(() => {
   display: flex;
   width: 100%;
   height: 100%;
-  font-family: 'Times New Roman';
+  font-family: "Times New Roman";
 }
 
 .dataScreen-header .header-lf {

@@ -196,14 +196,38 @@ const initTable = () => {
 };
 initTable();
 
-// 根据日期筛选工单信息
-const filter = () => {
+/**
+ * 获取所有成品待入库数据
+ */
+const getAllData = () => {
+  axios
+    .get("/kanban/product-storage/get-all")
+    .then((res) => {
+      allData.value = res.data.data;
+    })
+    .catch((error) => {
+      console.log("获取数据接口错误 - getAllData(): " + error);
+    });
+};
+getAllData();
+
+/**
+ * 根据条件获取成品库存数据
+ * @param page 页码
+ * @param pns 物料号
+ * @param states 状态
+ * @param wos 工单
+ */
+const getTableDataByParams = (page: number, pns: string, states: string, wos: string) => {
   axios
     .get("/kanban/product-storage/get-data", {
       params: {
-        current: 1,
+        current: page,
         startDate: dateArr.value[0],
         endDate: dateArr.value[1],
+        pns: pns === "" || pns == null ? "" : pns.slice(0, -1),
+        states: states === "" || states == null ? "" : states.slice(0, -1),
+        wos: wos === "" || wos == null ? "" : wos.slice(0, -1),
       },
     })
     .then((res) => {
@@ -212,8 +236,24 @@ const filter = () => {
       total.value = res.data.data.total;
     })
     .catch((error) => {
-      console.log("获取数据接口错误（Stock筛选）: " + error);
+      console.log(
+        "获取数据接口错误 - getTableDataByParams(" +
+          page +
+          ", " +
+          pns +
+          ", " +
+          states +
+          ", " +
+          wos +
+          "): " +
+          error
+      );
     });
+};
+
+// 根据日期筛选工单信息
+const filter = () => {
+  getTableDataByParams(1, "", "", "");
 };
 
 // 导出 Excel 报表
@@ -248,14 +288,28 @@ const exportExcel = async () => {
 };
 
 /**
- * 筛选
+ * 根据条件筛选数据
+ * @param pnArr 物料号
+ * @param stateArr 状态
+ * @param woArr 工单
  */
-const findByParam = (partNumber: []) => {
-  console.log("筛选");
+const findByParam = (pnArr: [], stateArr: [], woArr: []) => {
   let pns = "";
-  if (partNumber.length != 0 && partNumber != null && partNumber != undefined) {
-    partNumber.forEach((element) => {
+  if (pnArr != null && pnArr != undefined && pnArr.length != 0) {
+    pnArr.forEach((element) => {
       pns += element + ",";
+    });
+  }
+  let states = "";
+  if (stateArr != null && stateArr != undefined && stateArr.length != 0) {
+    stateArr.forEach((element) => {
+      states += element + ",";
+    });
+  }
+  let wos = "";
+  if (woArr != null && woArr != undefined && woArr.length != 0) {
+    woArr.forEach((element) => {
+      wos += element + ",";
     });
   }
   var page;
@@ -264,20 +318,7 @@ const findByParam = (partNumber: []) => {
   } else {
     page = "1";
   }
-  axios
-    .get("/kanban/product-storage/get-data", {
-      params: {
-        current: page,
-        pns: pns.slice(0, -1),
-      },
-    })
-    .then((res) => {
-      console.log(res.data.data.records);
-      records.value = res.data.data.records;
-    })
-    .catch((error) => {
-      console.log("获取数据接口错误（Stock切换）: " + error);
-    });
+  getTableDataByParams(page, pns, states, wos);
 };
 
 /**
@@ -291,37 +332,8 @@ const handlePageChange = () => {
   } else {
     page = "1";
   }
-  axios
-    .get("/kanban/product-storage/get-data", {
-      params: {
-        current: page,
-        startDate: dateArr.value[0],
-        endDate: dateArr.value[1],
-      },
-    })
-    .then((res) => {
-      console.log(res.data.data.records);
-      records.value = res.data.data.records;
-    })
-    .catch((error) => {
-      console.log("获取数据接口错误（Stock切换）: " + error);
-    });
+  getTableDataByParams(page, "", "", "");
 };
-
-/**
- * 获取所有成品待入库数据
- */
-const getAllData = () => {
-  axios
-    .get("/kanban/product-storage/get-all")
-    .then((res) => {
-      allData.value = res.data.data;
-    })
-    .catch((error) => {
-      console.log("获取数据接口错误（获取所有成品待入库数据）: " + error);
-    });
-};
-getAllData();
 
 // 实时获取
 onMounted(() => {

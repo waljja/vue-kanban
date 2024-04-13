@@ -18,6 +18,7 @@
       prop="wo"
       label="工单"
       align="center"
+      column-key="wo"
       :filters="woFilters"
       :filter-method="filterHandler"
     />
@@ -29,6 +30,7 @@
       prop="state"
       label="状态"
       align="center"
+      column-key="state"
       :filters="stateFilters"
       :filter-method="filterHandler"
     />
@@ -66,7 +68,7 @@ const props = defineProps<{
 }>();
 
 const emits = defineEmits<{
-  (e: "findByParam", partNumber: []): void;
+  (e: 'findByParam', pnArr: [], stateArr: [], woArr: []): void
 }>();
 
 const allData = computed(() => props.allData);
@@ -128,7 +130,7 @@ const filterHandler = (value: any, row: Product, column: TableColumnCtx<Product>
 
 const filterChange = (filters: any) => {
   console.log(filters.pn);
-  emits("findByParam", filters.pn);
+  emits('findByParam', filters.pn, filters.state, filters.wo);
 };
 </script>
 

@@ -246,33 +246,10 @@ const getAllData = () => {
       allData.value = res.data.data;
     })
     .catch((error) => {
-      console.log("获取数据接口错误（获取所有成品待入库数据）: " + error);
+      console.log("获取数据接口错误 - getAllData(): " + error);
     });
 };
 getAllData();
-
-/**
- * 获取成品库存数据
- * @param page 页码
- */
-const getTableData = (page: number) => {
-  axios
-    .get("/kanban/product-storage/get-data", {
-      params: {
-        current: page,
-        startDate: dateArr.value[0],
-        endDate: dateArr.value[1],
-      },
-    })
-    .then((res) => {
-      console.log(res.data.data.records);
-      records.value = res.data.data.records;
-      total.value = res.data.data.total;
-    })
-    .catch((error) => {
-      console.log("获取数据接口错误 - getTableData: " + error);
-    });
-};
 
 /**
  * 根据条件获取成品库存数据
@@ -286,17 +263,31 @@ const getTableDataByParams = (page: number, pns: string, states: string, wos: st
     .get("/kanban/product-storage/get-data", {
       params: {
         current: page,
-        pns: pns.slice(0, -1),
-        states: states.slice(0, -1),
-        wos: wos.slice(0, -1),
+        startDate: dateArr.value[0],
+        endDate: dateArr.value[1],
+        pns: pns === "" || pns == null ? "" : pns.slice(0, -1),
+        states: states === "" || states == null ? "" : states.slice(0, -1),
+        wos: wos === "" || wos == null ? "" : wos.slice(0, -1),
       },
     })
     .then((res) => {
       console.log(res.data.data.records);
       records.value = res.data.data.records;
+      total.value = res.data.data.total;
     })
     .catch((error) => {
-      console.log("获取数据接口错误 - getTableDataByParams: " + error);
+      console.log(
+        "获取数据接口错误 - getTableDataByParams(" +
+          page +
+          ", " +
+          pns +
+          ", " +
+          states +
+          ", " +
+          wos +
+          "): " +
+          error
+      );
     });
 };
 
@@ -304,7 +295,7 @@ const getTableDataByParams = (page: number, pns: string, states: string, wos: st
  * 根据日期筛选工单信息
  */
 const filter = () => {
-  getTableData(1);
+  getTableDataByParams(1, "", "", "");
 };
 
 /**
@@ -341,7 +332,10 @@ const exportExcel = async () => {
 };
 
 /**
- * 筛选
+ * 根据条件筛选数据
+ * @param pnArr 物料号
+ * @param stateArr 状态
+ * @param woArr 工单
  */
 const findByParam = (pnArr: [], stateArr: [], woArr: []) => {
   let pns = "";
@@ -400,7 +394,7 @@ const handlePageChange = () => {
   } else {
     page = "1";
   }
-  getTableData(page);
+  getTableDataByParams(page, "", "", "");
 };
 
 // 实时获取
