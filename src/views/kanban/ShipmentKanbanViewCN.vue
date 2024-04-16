@@ -73,7 +73,12 @@
         </div>
       </el-header>
       <el-main class="main">
-        <ShipmentDataTable :data="records" :records="records" />
+        <ShipmentDataTable
+          :data="records"
+          :records="records"
+          :allData="allData"
+          @findByParam="findByParam"
+        />
         <el-pagination
           v-model:current-page="currentPage"
           layout="prev, pager, next"
@@ -112,6 +117,10 @@ const currentPage = ref();
 var records = ref([]);
 // 返回总记录数
 var total = ref(20);
+/**
+ * 全部数据（成品出货）
+ */
+var allData = ref([]);
 const shortcuts = [
   {
     text: "上周",
@@ -194,15 +203,42 @@ const initTable = () => {
 initTable();
 
 /**
- * 根据日期筛选工单信息
+ * 获取所有成品待入库数据
  */
-const filter = () => {
+const getAllData = () => {
+  axios
+    .get("/kanban/product-shipment/get-all")
+    .then((res) => {
+      allData.value = res.data.data;
+    })
+    .catch((error) => {
+      console.log("获取数据接口错误（getAllData）: " + error);
+    });
+};
+getAllData();
+
+/**
+ * 根据条件获取待出货物料数据
+ * @param page 页码
+ * @param pns 物料号
+ * @param states 状态
+ * @param clientCodes 客户编号
+ */
+const getTableDataByParams = (
+  page: number,
+  shipNumbers: string,
+  states: string,
+  clientCodes: string
+) => {
   axios
     .get("/kanban/product-shipment/get-data", {
       params: {
-        current: 1,
+        current: page,
         startDate: dateArr.value[0],
         endDate: dateArr.value[1],
+        shipmentNumbers: shipNumbers,
+        states: states,
+        clientCodes: clientCodes,
       },
     })
     .then((res) => {
@@ -211,8 +247,26 @@ const filter = () => {
       total.value = res.data.data.total;
     })
     .catch((error) => {
-      console.log("获取数据接口错误（筛选）：" + error);
+      console.log(
+        "获取数据接口错误 - getTableDataByParams(" +
+          page +
+          ", " +
+          shipNumbers +
+          ", " +
+          states +
+          ", " +
+          clientCodes +
+          "): " +
+          error
+      );
     });
+};
+
+/**
+ * 根据日期筛选工单信息
+ */
+const filter = () => {
+  getTableDataByParams(1, "", "", "");
 };
 
 /**
@@ -241,6 +295,40 @@ const exportExcel = async () => {
     });
 };
 
+/**
+ * 根据条件筛选数据
+ * @param shipNumberArr 出货单号
+ * @param stateArr 状态
+ * @param clientCodeArr 客户编号
+ */
+const findByParam = (shipNumberArr: [], stateArr: [], clientCodeArr: []) => {
+  let shipNumbers = "";
+  if (shipNumberArr != null && shipNumberArr != undefined && shipNumberArr.length != 0) {
+    shipNumberArr.forEach((element) => {
+      shipNumbers += element + ",";
+    });
+  }
+  let states = "";
+  if (stateArr != null && stateArr != undefined && stateArr.length != 0) {
+    stateArr.forEach((element: string) => {
+      states += element + ",";
+    });
+  }
+  let clientCodes = "";
+  if (clientCodeArr != null && clientCodeArr != undefined && clientCodeArr.length != 0) {
+    clientCodeArr.forEach((element) => {
+      clientCodes += element + ",";
+    });
+  }
+  var page;
+  if (currentPage.value !== undefined) {
+    page = currentPage.value;
+  } else {
+    page = "1";
+  }
+  getTableDataByParams(page, shipNumbers, states, clientCodes);
+};
+
 // 切换页面
 const handlePageChange = () => {
   var page;
@@ -249,21 +337,7 @@ const handlePageChange = () => {
   } else {
     page = "1";
   }
-  axios
-    .get("/kanban/product-shipment/get-data", {
-      params: {
-        current: page,
-        startDate: dateArr.value[0],
-        endDate: dateArr.value[1],
-      },
-    })
-    .then((res) => {
-      console.log(res.data.data.records);
-      records.value = res.data.data.records;
-    })
-    .catch((error) => {
-      console.log("获取数据接口错误（切换）：" + error);
-    });
+  getTableDataByParams(page, "", "", "");
 };
 
 // 实时获取

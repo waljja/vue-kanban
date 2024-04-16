@@ -13,7 +13,6 @@
       align="center"
       column-key="pn"
       :filters="pnFilters"
-      :filter-method="filterHandler"
     />
     <el-table-column
       prop="wo"
@@ -21,7 +20,6 @@
       align="center"
       column-key="wo"
       :filters="woFilters"
-      :filter-method="filterHandler"
     />
     <el-table-column prop="uid" label="UID" align="center" />
     <el-table-column prop="batch" label="số lô" align="center" />
@@ -33,14 +31,12 @@
       align="center"
       column-key="state"
       :filters="stateFilters"
-      :filter-method="filterHandler"
       :formatter="formatter"
     />
     <el-table-column
       prop="storageLoc"
       label="vị trí kho"
       align="center"
-      :filter-method="filterHandler"
     />
     <el-table-column prop="recTime" label="thời gian nhận hàng" align="center" sortable />
   </el-table>
@@ -125,10 +121,6 @@ const stateFilters = computed(() => {
   // 去重
   return distinct(stateArr);
 });
-
-const filterHandler = (value: any, row: Product, column: TableColumnCtx<Product>) => {
-  // emits('findByParam', value);
-};
 
 const filterChange = (filters: any) => {
   emits('findByParam', filters.pn, filters.state, filters.wo);

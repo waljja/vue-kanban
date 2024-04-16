@@ -6,6 +6,7 @@
     cell-class-name="cell-class"
     @cell-mouse-enter="hoverRow"
     @cell-mouse-leave="leaveRow"
+    @filter-change="filterChange"
   >
     <el-table-column
       prop="shipmentDate"
@@ -39,8 +40,8 @@
       prop="shipmentNo"
       label="đơn xuất hàng"
       align="center"
+      column-key="shipmentNumber"
       :filters="shipNoFilters"
-      :filter-method="filterHandler"
     >
       <template v-slot="scope">
         <el-popover
@@ -65,8 +66,8 @@
       label="mã khách hàng"
       width="165"
       align="center"
+      column-key="clientCode"
       :filters="clientFilters"
-      :filter-method="filterHandler"
     />
     <el-table-column
       prop="shipmentQty"
@@ -90,8 +91,8 @@
       label="trạng thái"
       width="130"
       align="center"
+      column-key="state"
       :filters="stateFilters"
-      :filter-method="filterHandler"
       :formatter="formatter"
     >
       <template #default="scope">
@@ -110,7 +111,6 @@
 
 <script lang="ts" setup>
 import { computed } from "vue";
-import type { TableColumnCtx } from "element-plus";
 
 export interface Shipment {
   [key: string]: any;
@@ -133,9 +133,16 @@ export interface Shipment {
 // 父组件传递数组
 const props = defineProps<{
   records: Shipment[];
+  allData: Shipment[];
 }>();
-// 表格数据
-const tableData = computed(() => props.records);
+
+const emits = defineEmits<{
+  (e: "findByParam", shipNumberArr: [], stateArr: [], clientCodeArr: []): void;
+}>();
+
+// 所有成品出货数据
+const allData = computed(() => props.allData);
+
 const popperStyle = {
   "font-family": "Oppo-Sans",
   "font-size": "15px",
@@ -172,8 +179,8 @@ const distinct = (array: string[]) => {
 // 出货单号去重
 const shipNoFilters = computed(() => {
   let arr: string[] = [];
-  // 所有 出货单号 抽出来装入集合
-  tableData.value.forEach((item) => {
+  // 所有出货单号抽出来装入集合
+  allData.value.forEach((item) => {
     arr.push(item.shipmentNo);
   });
   // 去重
@@ -183,8 +190,8 @@ const shipNoFilters = computed(() => {
 // 客户编号去重
 const clientFilters = computed(() => {
   let arr: string[] = [];
-  // 所有 客户编号 抽出来装入集合
-  tableData.value.forEach((item) => {
+  // 所有客户编号抽出来装入集合
+  allData.value.forEach((item) => {
     arr.push(item.clientCode);
   });
   // 去重
@@ -194,17 +201,16 @@ const clientFilters = computed(() => {
 // 状态去重
 const stateFilters = computed(() => {
   let arr: string[] = [];
-  // 所有 状态 抽出来装入集合
-  tableData.value.forEach((item) => {
-    arr.push(item.state);
+  // 所有状态抽出来装入集合
+  allData.value.forEach((item) => {
+    arr.push(item.state.toString());
   });
   // 去重
   return distinct(arr);
 });
 
-const filterHandler = (value: any, row: Shipment, column: TableColumnCtx<Shipment>) => {
-  const property = column["property"];
-  return row[property] === value;
+const filterChange = (filters: any) => {
+  emits("findByParam", filters.shipmentNumber, filters.state, filters.clientCode);
 };
 
 /**

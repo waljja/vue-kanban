@@ -75,7 +75,12 @@
         </div>
       </el-header>
       <el-main class="main">
-        <ShipmentDataTable :data="records" :records="records" />
+        <ShipmentDataTable
+          :data="records"
+          :records="records"
+          :allData="allData"
+          @findByParam="findByParam"
+        />
         <el-pagination
           v-model:current-page="currentPage"
           layout="prev, pager, next"
@@ -114,6 +119,10 @@ const currentPage = ref();
 var records = ref([]);
 // 返回总记录数
 var total = ref(20);
+/**
+ * 全部数据（成品出货）
+ */
+var allData = ref([]);
 const shortcuts = [
   {
     text: "Tuần trước",
@@ -198,73 +207,60 @@ initTable();
 /**
  * 获取所有成品待入库数据
  */
-// const getAllData = () => {
-//   axios
-//     .get("/kanban/product-storage/get-all")
-//     .then((res) => {
-//       // 把状态筛选的文字显示转换成越南文
-//       res.data.data.forEach((item: any) => {
-//         if (item.state === "待上架") {
-//           item.state = "Chờ lên giá";
-//         } else if (item.state === "转运中（未收货）") {
-//           item.state = "Đang di chuyển ( chưa nhập kho)";
-//         } else if (item.state === "转运中（已上架）") {
-//           item.state = "Đang di chuyển ( đã lên giá )";
-//         } else if (item.state === "待装车") {
-//           item.state = "Chờ xếp xe";
-//         } else if (item.state === "待拣货") {
-//           item.state = "Chờ nhặt hàng";
-//         } else if (item.state === "欠货") {
-//           item.state === "Thiếu hàng";
-//         } else if (item.state === "待绑定出货区") {
-//           item.state = "Chờ Ràng buộc khu vực xuất hàng";
-//         } else if (item.state === "备货中") {
-//           item.state = "Chuẩn bị";
-//         }
-//       });
-//       allData.value = res.data.data;
-//     })
-//     .catch((error) => {
-//       console.log("获取数据接口错误（获取所有成品待入库数据）: " + error);
-//     });
-// };
-// getAllData();
+const getAllData = () => {
+  axios
+    .get("/kanban/product-shipment/get-all")
+    .then((res) => {
+      // 把状态筛选的文字显示转换成越南文
+      res.data.data.forEach((item: any) => {
+        if (item.state === "待上架") {
+          item.state = "Chờ lên giá";
+        } else if (item.state === "转运中（未收货）") {
+          item.state = "Đang di chuyển ( chưa nhập kho)";
+        } else if (item.state === "转运中（已上架）") {
+          item.state = "Đang di chuyển ( đã lên giá )";
+        } else if (item.state === "待装车") {
+          item.state = "Chờ xếp xe";
+        } else if (item.state === "待拣货") {
+          item.state = "Chờ nhặt hàng";
+        } else if (item.state === "欠货") {
+          item.state === "Thiếu hàng";
+        } else if (item.state === "待绑定出货区") {
+          item.state = "Chờ Ràng buộc khu vực xuất hàng";
+        } else if (item.state === "备货中") {
+          item.state = "Chuẩn bị";
+        }
+      });
+      allData.value = res.data.data;
+    })
+    .catch((error) => {
+      console.log("获取数据接口错误（getAllData）: " + error);
+    });
+};
+getAllData();
 
 /**
  * 根据条件获取待出货物料数据
  * @param page 页码
  * @param pns 物料号
  * @param states 状态
- * @param wos 工单
+ * @param clientCodes 客户编号
  */
-// const getTableDataByParams = (page: number, shipNumbers: string, states: string, pos: string) => {
-//   axios
-//     .get("/kanban/product-shipment/get-data", {
-//       params: {
-//         current: page,
-//         startDate: dateArr.value[0],
-//         endDate: dateArr.value[1],
-//       },
-//     })
-//     .then((res) => {
-//       console.log(res.data.data.records);
-//       records.value = res.data.data.records;
-//     })
-//     .catch((error) => {
-//       console.log("获取数据接口错误（切换）：" + error);
-//     });
-// };
-
-/**
- * 根据日期筛选工单信息
- */
-const filter = () => {
+const getTableDataByParams = (
+  page: number,
+  shipNumbers: string,
+  states: string,
+  clientCodes: string
+) => {
   axios
     .get("/kanban/product-shipment/get-data", {
       params: {
-        current: 1,
+        current: page,
         startDate: dateArr.value[0],
         endDate: dateArr.value[1],
+        shipmentNumbers: shipNumbers,
+        states: states,
+        clientCodes: clientCodes,
       },
     })
     .then((res) => {
@@ -273,8 +269,26 @@ const filter = () => {
       total.value = res.data.data.total;
     })
     .catch((error) => {
-      console.log("获取数据接口错误（筛选）：" + error);
+      console.log(
+        "获取数据接口错误 - getTableDataByParams(" +
+          page +
+          ", " +
+          shipNumbers +
+          ", " +
+          states +
+          ", " +
+          clientCodes +
+          "): " +
+          error
+      );
     });
+};
+
+/**
+ * 根据日期筛选工单信息
+ */
+const filter = () => {
+  getTableDataByParams(1, "", "", "");
 };
 
 /**
@@ -303,6 +317,58 @@ const exportExcel = async () => {
     });
 };
 
+/**
+ * 根据条件筛选数据
+ * @param shipNumberArr 出货单号
+ * @param stateArr 状态
+ * @param clientCodeArr 客户编号
+ */
+const findByParam = (shipNumberArr: [], stateArr: [], clientCodeArr: []) => {
+  let shipNumbers = "";
+  if (shipNumberArr != null && shipNumberArr != undefined && shipNumberArr.length != 0) {
+    shipNumberArr.forEach((element) => {
+      shipNumbers += element + ",";
+    });
+  }
+  let states = "";
+  if (stateArr != null && stateArr != undefined && stateArr.length != 0) {
+    // 把筛选的状态转换回中文
+    stateArr.forEach((element: string) => {
+      if (element === "Chờ lên giá") {
+        element = "待上架";
+      } else if (element === "Đang di chuyển ( chưa nhập kho)") {
+        element = "转运中（未收货）";
+      } else if (element === "Đang di chuyển ( đã lên giá )") {
+        element = "转运中（已上架）";
+      } else if (element === "Chờ xếp xe") {
+        element = "待装车";
+      } else if (element === "Chờ nhặt hàng") {
+        element = "待拣货";
+      } else if (element === "Thiếu hàng") {
+        element = "欠货";
+      } else if (element === "Chờ Ràng buộc khu vực xuất hàng") {
+        element = "待绑定出货区";
+      } else if (element === "Chuẩn bị") {
+        element = "备货中";
+      }
+      states += element + ",";
+    });
+  }
+  let clientCodes = "";
+  if (clientCodeArr != null && clientCodeArr != undefined && clientCodeArr.length != 0) {
+    clientCodeArr.forEach((element) => {
+      clientCodes += element + ",";
+    });
+  }
+  var page;
+  if (currentPage.value !== undefined) {
+    page = currentPage.value;
+  } else {
+    page = "1";
+  }
+  getTableDataByParams(page, shipNumbers, states, clientCodes);
+};
+
 // 切换页面
 const handlePageChange = () => {
   var page;
@@ -311,21 +377,7 @@ const handlePageChange = () => {
   } else {
     page = "1";
   }
-  axios
-    .get("/kanban/product-shipment/get-data", {
-      params: {
-        current: page,
-        startDate: dateArr.value[0],
-        endDate: dateArr.value[1],
-      },
-    })
-    .then((res) => {
-      console.log(res.data.data.records);
-      records.value = res.data.data.records;
-    })
-    .catch((error) => {
-      console.log("获取数据接口错误（切换）：" + error);
-    });
+  getTableDataByParams(page, "", "", "");
 };
 
 // 实时获取
